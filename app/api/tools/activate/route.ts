@@ -61,9 +61,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      toolName: activation.tool.name,
-      toolId: activation.tool.id,
-      message: `已成功激活「${activation.tool.name}」`,
+      toolName: activation.tool?.name || '未知工具',
+      toolId: activation.tool?.id || '',
+      message: `已成功激活「${activation.tool?.name || '工具'}」`,
     });
   } catch (error) {
     console.error('Activate error:', error);
