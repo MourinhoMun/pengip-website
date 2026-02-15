@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
 
         // 生成长期 Token
         const token = sign(
-            { userId: user.id, deviceId: user.deviceId, role: user.role },
+            { userId: (user as any).id, deviceId: (user as any).deviceId, role: (user as any).role },
             JWT_SECRET,
             { expiresIn: '365d' } // 1 year token for client
         );
