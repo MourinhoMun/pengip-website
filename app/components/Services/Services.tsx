@@ -18,6 +18,7 @@ export default function Services() {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: '-100px' });
   const { t } = useLanguage();
+  const services = t.services as any;
 
   return (
     <section className={styles.services} id="services">
@@ -29,15 +30,15 @@ export default function Services() {
           transition={{ duration: 0.6 }}
         >
           <h2 className={styles.title}>
-            {t.services.title}<span className={styles.highlight}>{t.services.titleHighlight}</span>
+            {services.title}<span className={styles.highlight}>{services.titleHighlight}</span>
           </h2>
           <p className={styles.subtitle}>
-            {t.services.subtitle}
+            {services.subtitle}
           </p>
         </motion.div>
 
         <div className={styles.grid}>
-          {t.services.items.map((service, index) => {
+          {services.items.map((service: any, index: number) => {
             const Icon = icons[index];
             const color = colors[index];
             const gradient = gradients[index];
@@ -80,7 +81,7 @@ export default function Services() {
                   className={styles.learnMore}
                   style={{ color }}
                 >
-                  {t.services.learnMore}
+                  {services.learnMore}
                   <ArrowRight size={16} />
                 </a>
               </motion.div>

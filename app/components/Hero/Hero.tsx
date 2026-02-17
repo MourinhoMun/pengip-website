@@ -8,11 +8,12 @@ import styles from './Hero.module.scss';
 
 export default function Hero() {
   const { t, lang } = useLanguage();
+  const hero = t.hero as any;
 
   const stats = [
-    { value: '10+', label: t.hero.stats.experience },
-    { value: lang === 'zh' ? '百万级' : 'Million+', label: t.hero.stats.revenue },
-    { value: lang === 'zh' ? '数千万' : 'Tens of M', label: t.hero.stats.tuition },
+    { value: '10+', label: hero.stats.years },
+    { value: lang === 'zh' ? '百万级' : 'Million+', label: hero.stats.value },
+    { value: lang === 'zh' ? '数千万' : 'Tens of M', label: hero.stats.startup },
   ];
 
   return (
@@ -34,7 +35,7 @@ export default function Hero() {
           >
             <Image
               src="/avatar.png"
-              alt={t.hero.name}
+              alt={hero.name}
               width={120}
               height={120}
               className={styles.avatar}
@@ -50,7 +51,7 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.4 }}
           >
-            <span>{t.hero.badge}</span>
+            <span>{hero.badge}</span>
           </motion.div>
 
           {/* 主标题 */}
@@ -61,7 +62,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.5 }}
           >
-            {t.hero.greeting} <span className={styles.highlight}>{t.hero.name}</span>
+            {hero.greeting} <span className={styles.highlight}>{hero.name}</span>
           </motion.h1>
 
           <motion.h2
@@ -71,7 +72,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
-            {t.hero.title}
+            {hero.title}
           </motion.h2>
 
           {/* 描述 */}
@@ -82,9 +83,9 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.5 }}
           >
-            {t.hero.description}
+            {hero.description}
             <br />
-            {t.hero.description2}
+            {hero.description2}
           </motion.p>
 
           {/* CTA 按钮 */}
@@ -96,18 +97,18 @@ export default function Hero() {
             transition={{ delay: 0.4, duration: 0.5 }}
           >
             <a href="#contact" className={styles.primaryBtn}>
-              {t.hero.contactMe}
+              {hero.contactMe}
               <ArrowRight size={16} />
             </a>
 
             {/* 重点强调的按钮 - 定位到工具列表 */}
             <a href="#tools" className={styles.highlightBtn}>
               <Bot size={18} />
-              {t.hero.tryAI}
+              {hero.tryAI}
             </a>
 
             <a href="#experience" className={styles.secondaryBtn}>
-              {t.hero.myStory}
+              {hero.myStory}
             </a>
           </motion.div>
         </motion.div>
@@ -138,7 +139,7 @@ export default function Hero() {
         <div className={styles.mouse}>
           <div className={styles.wheel} />
         </div>
-        <span>{t.hero.scrollDown}</span>
+        <span>{hero.scrollDown}</span>
       </motion.div>
     </section>
   );
