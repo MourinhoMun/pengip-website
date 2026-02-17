@@ -30,13 +30,11 @@ npx prisma generate
 
 # 3. 初始化数据库
 echo ""
-echo "[3/5] 初始化数据库..."
-if [ ! -f "$APP_DIR/dev.db" ]; then
-    node deploy/init-db.js
-    echo "数据库初始化完成"
-else
-    echo "数据库已存在，跳过初始化"
-fi
+echo "[3/5] 更新数据库结构..."
+npx prisma db push
+
+echo "检查并播种初始数据..."
+node deploy/init-db.js
 
 # 4. 构建项目
 echo ""
