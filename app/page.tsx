@@ -1,3 +1,4 @@
+export const revalidate = 60;
 import prisma from '@/app/lib/db';
 import { Navbar, Hero, Experience, Services, Tools, Footer } from './components';
 
