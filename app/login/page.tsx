@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -28,11 +28,24 @@ function LoginForm() {
     setCaptcha('');
   };
 
+  const [countdown, setCountdown] = useState(3);
+  const [canSubmit, setCanSubmit] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   useEffect(() => {
     loadCaptcha();
-    if (msg === 'admin') {
-      setInfo('请先登录管理员账户');
-    }
+    if (msg === 'admin') setInfo('请先登录管理员账户');
+    timerRef.current = setInterval(() => {
+      setCountdown((c) => {
+        if (c <= 1) {
+          clearInterval(timerRef.current!);
+          setCanSubmit(true);
+          return 0;
+        }
+        return c - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timerRef.current!);
   }, [msg]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -141,8 +154,16 @@ function LoginForm() {
             </div>
           </div>
 
-          <button type="submit" className={styles.submitBtn} disabled={loading}>
-            {loading ? '登录中...' : '登录'}
+          <div className={styles.termsBox}>
+            <div className={styles.termsContent}>
+              <p><strong>⚠️ 使用条款提示</strong></p>
+              <p>本平台所有软件均为<strong>AI辅助工具</strong>，生成内容仅供参考，不构成医疗诊断或手术承诺。</p>
+              <p><strong>严禁</strong>将AI生成内容用于虚假宣传、商业推广或欺骗患者，违者须承担全部法律责任，本平台不承担任何连带责任。</p>
+            </div>
+          </div>
+
+          <button type="submit" className={styles.submitBtn} disabled={loading || !canSubmit}>
+            {!canSubmit ? `请阅读条款（${countdown}s）` : (loading ? '登录中...' : '登录')}
           </button>
         </form>
 
