@@ -1,9 +1,11 @@
 'use client';
 
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { FileText, Presentation, Video, BarChart3, Plus, Sparkles, Lock } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { FileText, Presentation, Video, BarChart3, Plus, Sparkles, Lock, X, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/app/i18n';
+import { useAuth } from '@/app/contexts/AuthContext';
 import styles from './Tools.module.scss';
 
 const icons = [FileText, Presentation, Video, BarChart3, Plus];
@@ -13,6 +15,17 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: '-100px' });
   const { t, lang } = useLanguage();
+  const { user } = useAuth();
+  const router = useRouter();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const handleToolClick = () => {
+    if (user) {
+      router.push('/dashboard');
+    } else {
+      setShowLoginModal(true);
+    }
+  };
 
   const displayTools = dbTools?.length ? dbTools.map((tool) => ({
     title: lang === 'en' ? (tool.nameEn || tool.name) : tool.name,
@@ -96,9 +109,9 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
 
                 {/* 按钮 */}
                 {!isComing ? (
-                  <button className={styles.useBtn} style={{ background: color }}>
-                    <Lock size={14} />
-                    {t.tools.loginToUse}
+                  <button className={styles.useBtn} style={{ background: color }} onClick={handleToolClick}>
+                    {user ? <ArrowRight size={14} /> : <Lock size={14} />}
+                    {user ? t.tools.useTool : t.tools.loginToUse}
                   </button>
                 ) : (
                   <button className={styles.comingBtn} disabled>
@@ -122,6 +135,51 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
           </p>
         </motion.div>
       </div>
+
+      {/* Login Modal */}
+      <AnimatePresence>
+        {showLoginModal && (
+          <motion.div
+            className={styles.modalOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowLoginModal(false)}
+          >
+            <motion.div
+              className={styles.modal}
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', duration: 0.4 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className={styles.modalClose} onClick={() => setShowLoginModal(false)}>
+                <X size={18} />
+              </button>
+              <div className={styles.modalIcon}>
+                <Lock size={24} />
+              </div>
+              <h3 className={styles.modalTitle}>{t.tools.modalTitle}</h3>
+              <p className={styles.modalDesc}>{t.tools.modalDesc}</p>
+              <div className={styles.modalActions}>
+                <button
+                  className={styles.modalLoginBtn}
+                  onClick={() => { setShowLoginModal(false); router.push('/login'); }}
+                >
+                  {t.tools.goLogin}
+                </button>
+                <button
+                  className={styles.modalRegisterBtn}
+                  onClick={() => { setShowLoginModal(false); router.push('/register'); }}
+                >
+                  {t.tools.goRegister}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

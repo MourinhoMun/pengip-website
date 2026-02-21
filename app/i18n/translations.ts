@@ -59,11 +59,16 @@ export interface Translations {
     subtitle: string;
     points: string;
     loginToUse: string;
+    useTool: string;
     stayTuned: string;
     comingSoon: string;
     footer: string;
     footerPoints: string;
     footerExtra: string;
+    modalTitle: string;
+    modalDesc: string;
+    goLogin: string;
+    goRegister: string;
     items: {
       title: string;
       description: string;
@@ -203,8 +208,13 @@ export const translations: Record<Language, Translations> = {
       subtitle: '解决内容创作痛点',
       points: '积分',
       loginToUse: '登录使用',
+      useTool: '立即使用',
       stayTuned: '敬请期待',
       comingSoon: '即将上线',
+      modalTitle: '请先登录',
+      modalDesc: '登录或注册后即可使用AI工具',
+      goLogin: '去登录',
+      goRegister: '去注册',
       footer: '注册即送',
       footerPoints: '100积分',
       footerExtra: '，邀请同行可获更多积分奖励',
@@ -341,8 +351,13 @@ export const translations: Record<Language, Translations> = {
       subtitle: 'Solving content creation pain points',
       points: 'Points',
       loginToUse: 'Login to Use',
+      useTool: 'Use Now',
       stayTuned: 'Stay Tuned',
       comingSoon: 'Coming Soon',
+      modalTitle: 'Login Required',
+      modalDesc: 'Please login or register to use AI tools',
+      goLogin: 'Login',
+      goRegister: 'Register',
       footer: 'Get ',
       footerPoints: '100 Points',
       footerExtra: ' upon registration, invite peers for more!',
