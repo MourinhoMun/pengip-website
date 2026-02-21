@@ -14,6 +14,7 @@ interface Tool {
   points: number;
   url: string | null;
   downloadUrl: string | null;
+  tutorialUrl: string | null;
   status: string;
   sortOrder: number;
   visible: boolean;
@@ -49,6 +50,7 @@ const defaultTool = {
   points: 5,
   url: '',
   downloadUrl: '',
+  tutorialUrl: '',
   status: 'active',
   sortOrder: 0,
   visible: true,
@@ -123,6 +125,7 @@ export default function ToolsPage() {
       points: tool.points,
       url: tool.url || '',
       downloadUrl: tool.downloadUrl || '',
+      tutorialUrl: tool.tutorialUrl || '',
       status: tool.status,
       sortOrder: tool.sortOrder,
       visible: tool.visible,
@@ -619,6 +622,17 @@ export default function ToolsPage() {
                   onChange={(e) => setFormData({ ...formData, downloadUrl: e.target.value })}
                   className={styles.input}
                   placeholder="https://pan.baidu.com/s/..."
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>教程视频链接</label>
+                <input
+                  type="text"
+                  value={formData.tutorialUrl}
+                  onChange={(e) => setFormData({ ...formData, tutorialUrl: e.target.value })}
+                  className={styles.input}
+                  placeholder="https://www.bilibili.com/video/..."
                 />
               </div>
 

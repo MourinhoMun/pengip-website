@@ -69,6 +69,7 @@ export interface Translations {
     modalDesc: string;
     goLogin: string;
     goRegister: string;
+    howToUse: string;
     items: {
       title: string;
       description: string;
@@ -215,6 +216,7 @@ export const translations: Record<Language, Translations> = {
       modalDesc: '登录或注册后即可使用AI工具',
       goLogin: '去登录',
       goRegister: '去注册',
+      howToUse: '怎么用',
       footer: '注册即送',
       footerPoints: '100积分',
       footerExtra: '，邀请同行可获更多积分奖励',
@@ -358,6 +360,7 @@ export const translations: Record<Language, Translations> = {
       modalDesc: 'Please login or register to use AI tools',
       goLogin: 'Login',
       goRegister: 'Register',
+      howToUse: 'How to Use',
       footer: 'Get ',
       footerPoints: '100 Points',
       footerExtra: ' upon registration, invite peers for more!',

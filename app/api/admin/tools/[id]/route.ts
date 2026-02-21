@@ -39,6 +39,7 @@ export async function PUT(
         points: body.points,
         url: body.url,
         downloadUrl: body.downloadUrl,
+        tutorialUrl: body.tutorialUrl,
         status: body.status,
         sortOrder: body.sortOrder,
         visible: body.visible !== undefined ? body.visible : undefined,

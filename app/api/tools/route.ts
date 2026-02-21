@@ -17,6 +17,7 @@ export async function GET() {
         points: true,
         url: true,
         downloadUrl: true,
+        tutorialUrl: true,
         status: true,
       },
     });

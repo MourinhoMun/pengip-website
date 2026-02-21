@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { FileText, Presentation, Video, BarChart3, Plus, Sparkles, Lock, X, ArrowRight } from 'lucide-react';
+import { FileText, Presentation, Video, BarChart3, Plus, Sparkles, Lock, X, ArrowRight, PlayCircle } from 'lucide-react';
 import { useLanguage } from '@/app/i18n';
 import { useAuth } from '@/app/contexts/AuthContext';
 import styles from './Tools.module.scss';
@@ -33,6 +33,7 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
     points: tool.points,
     icon: tool.icon,
     isComing: tool.status === 'coming',
+    tutorialUrl: tool.tutorialUrl || null,
   })) : t.tools.items;
 
   return (
@@ -109,10 +110,23 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
 
                 {/* 按钮 */}
                 {!isComing ? (
-                  <button className={styles.useBtn} style={{ background: color }} onClick={handleToolClick}>
-                    {user ? <ArrowRight size={14} /> : <Lock size={14} />}
-                    {user ? t.tools.useTool : t.tools.loginToUse}
-                  </button>
+                  <div className={styles.btnGroup}>
+                    <button className={styles.useBtn} style={{ background: color }} onClick={handleToolClick}>
+                      {user ? <ArrowRight size={14} /> : <Lock size={14} />}
+                      {user ? t.tools.useTool : t.tools.loginToUse}
+                    </button>
+                    {tool.tutorialUrl && (
+                      <a
+                        href={tool.tutorialUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.tutorialBtn}
+                      >
+                        <PlayCircle size={14} />
+                        {t.tools.howToUse}
+                      </a>
+                    )}
+                  </div>
                 ) : (
                   <button className={styles.comingBtn} disabled>
                     {t.tools.stayTuned}

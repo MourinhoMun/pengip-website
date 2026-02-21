@@ -48,6 +48,7 @@ model Tool {
   points        Int         @default(5) // 使用消耗积分
   url           String?     // 工具跳转链接
   downloadUrl   String?     // 下载地址（百度网盘等）
+  tutorialUrl   String?     // 教程视频链接
   status        String      @default("active") // active | inactive | coming
   sortOrder     Int         @default(0)
   visible       Boolean     @default(true)
