@@ -19,12 +19,12 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
   const router = useRouter();
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const handleToolClick = () => {
-    if (user) {
-      router.push('/dashboard');
-    } else {
+  const handleToolClick = (toolUrl?: string) => {
+    if (!user) {
       setShowLoginModal(true);
+      return;
     }
+    router.push(toolUrl || '/dashboard');
   };
 
   const displayTools = dbTools?.length ? dbTools.map((tool) => ({
@@ -34,6 +34,7 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
     icon: tool.icon,
     isComing: tool.status === 'coming',
     tutorialUrl: tool.tutorialUrl || null,
+    url: tool.url || null,
   })) : t.tools.items;
 
   return (
@@ -111,7 +112,7 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
                 {/* 按钮 */}
                 {!isComing ? (
                   <div className={styles.btnGroup}>
-                    <button className={styles.useBtn} style={{ background: color }} onClick={handleToolClick}>
+                    <button className={styles.useBtn} style={{ background: color }} onClick={() => handleToolClick(tool.url)}>
                       {user ? <ArrowRight size={14} /> : <Lock size={14} />}
                       {user ? t.tools.useTool : t.tools.loginToUse}
                     </button>

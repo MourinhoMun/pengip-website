@@ -379,19 +379,13 @@ export default function DashboardPage() {
                     </span>
                     <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
                       {tool.downloadUrl && isActivated && (
-                        <a
-                          href={tool.downloadUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.downloadSmBtn}
-                          title={lang === 'zh' ? '下载' : 'Download'}
-                        >
+                        <a href={tool.downloadUrl} target="_blank" rel="noopener noreferrer" className={styles.downloadSmBtn} title={lang === 'zh' ? '下载' : 'Download'}>
                           <Download size={14} />
                         </a>
                       )}
                       {isComing ? (
                         <span className={styles.comingBadge}>{lang === 'zh' ? '即将上线' : 'Coming'}</span>
-                      ) : isActivated && tool.url ? (
+                      ) : tool.url ? (
                         <a href={tool.url} className={styles.useBtn}>
                           <ExternalLink size={14} />
                           {lang === 'zh' ? '进入工具' : 'Open'}
@@ -402,16 +396,8 @@ export default function DashboardPage() {
                           onClick={() => handleUseTool(tool)}
                           disabled={isUsing || !canAfford}
                         >
-                          {isUsing ? (
-                            <span className={styles.btnSpinner} />
-                          ) : (
-                            <>
-                              <ExternalLink size={14} />
-                              {canAfford
-                                ? (lang === 'zh' ? '开始使用' : 'Use')
-                                : (lang === 'zh' ? '积分不足' : 'Need pts')
-                              }
-                            </>
+                          {isUsing ? <span className={styles.btnSpinner} /> : (
+                            <><ExternalLink size={14} />{canAfford ? (lang === 'zh' ? '开始使用' : 'Use') : (lang === 'zh' ? '积分不足' : 'Need pts')}</>
                           )}
                         </button>
                       )}
