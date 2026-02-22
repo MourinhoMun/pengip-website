@@ -53,6 +53,11 @@ export async function POST(request: NextRequest) {
         throw new Error('USER_NOT_FOUND');
       }
 
+      const now = new Date();
+      if (!user.subscriptionExpiresAt || user.subscriptionExpiresAt < now) {
+        throw new Error('SUBSCRIPTION_REQUIRED');
+      }
+
       if (user.points < tool.points) {
         throw new Error('INSUFFICIENT_POINTS');
       }
@@ -93,6 +98,9 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     if (error.message === 'USER_NOT_FOUND') {
       return NextResponse.json({ error: '用户不存在' }, { status: 404 });
+    }
+    if (error.message === 'SUBSCRIPTION_REQUIRED') {
+      return NextResponse.json({ error: '请先激活年卡', subscriptionRequired: true }, { status: 403 });
     }
     if (error.message === 'INSUFFICIENT_POINTS') {
       return NextResponse.json({ error: '积分不足' }, { status: 400 });

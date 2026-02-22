@@ -43,6 +43,8 @@ export async function PUT(
         status: body.status,
         sortOrder: body.sortOrder,
         visible: body.visible !== undefined ? body.visible : undefined,
+        apiUrl: body.apiUrl || null,
+        apiKey: body.apiKey || null,
       },
     });
 

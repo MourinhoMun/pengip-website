@@ -15,6 +15,8 @@ interface Tool {
   url: string | null;
   downloadUrl: string | null;
   tutorialUrl: string | null;
+  apiUrl: string | null;
+  apiKey: string | null;
   status: string;
   sortOrder: number;
   visible: boolean;
@@ -51,6 +53,8 @@ const defaultTool = {
   url: '',
   downloadUrl: '',
   tutorialUrl: '',
+  apiUrl: '',
+  apiKey: '',
   status: 'active',
   sortOrder: 0,
   visible: true,
@@ -62,6 +66,7 @@ export default function ToolsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(defaultTool);
+  const [showApiKey, setShowApiKey] = useState(false);
   // 激活码相关
   const [codesToolId, setCodesToolId] = useState<string | null>(null);
   const [codesToolName, setCodesToolName] = useState('');
@@ -126,6 +131,8 @@ export default function ToolsPage() {
       url: tool.url || '',
       downloadUrl: tool.downloadUrl || '',
       tutorialUrl: tool.tutorialUrl || '',
+      apiUrl: tool.apiUrl || '',
+      apiKey: tool.apiKey || '',
       status: tool.status,
       sortOrder: tool.sortOrder,
       visible: tool.visible,
@@ -228,6 +235,7 @@ export default function ToolsPage() {
     setShowForm(false);
     setEditingId(null);
     setFormData(defaultTool);
+    setShowApiKey(false);
   };
 
   return (
@@ -634,6 +642,42 @@ export default function ToolsPage() {
                   className={styles.input}
                   placeholder="https://www.bilibili.com/video/..."
                 />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>API 调用地址</label>
+                <input
+                  type="text"
+                  value={formData.apiUrl}
+                  onChange={(e) => setFormData({ ...formData, apiUrl: e.target.value })}
+                  className={styles.input}
+                  placeholder="https://api.example.com/v1/chat/completions"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>API Key</label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type={showApiKey ? 'text' : 'password'}
+                    value={formData.apiKey}
+                    onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}
+                    className={styles.input}
+                    placeholder="sk-..."
+                    style={{ paddingRight: '2.5rem' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowApiKey(!showApiKey)}
+                    style={{
+                      position: 'absolute', right: '0.5rem', top: '50%',
+                      transform: 'translateY(-50%)', background: 'none',
+                      border: 'none', cursor: 'pointer', color: '#94a3b8', padding: '0.25rem',
+                    }}
+                  >
+                    {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>

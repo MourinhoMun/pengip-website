@@ -587,6 +587,136 @@
   white-space: nowrap;
 }
 
+/* 订阅状态徽章 */
+.subBadgeActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #059669;
+  background: #d1fae5;
+  border-radius: 20px;
+}
+
+.subBadgeExpired {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #b45309;
+  background: #fef3c7;
+  border-radius: 20px;
+}
+
+/* 续费按钮 */
+.renewBtn {
+  background: #f59e0b !important;
+
+  &:hover:not(:disabled) {
+    background: #d97706 !important;
+  }
+}
+
+/* 续费弹窗遮罩 */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* 续费弹窗 */
+.renewalModal {
+  position: relative;
+  background: white;
+  border-radius: 16px;
+  padding: 2rem 1.75rem;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.modalClose {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  color: var(--text-muted);
+  padding: 0.25rem;
+  border-radius: 6px;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.modalIcon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.modalTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.6rem;
+}
+
+.modalBody {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.modalActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modalPrimaryBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  background: var(--primary);
+  border-radius: 10px;
+  transition: background var(--transition-fast);
+
+  &:hover {
+    background: var(--primary-dark);
+  }
+}
+
+.modalSecondaryBtn {
+  width: 100%;
+  padding: 0.65rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-radius: 10px;
+  transition: background var(--transition-fast);
+
+  &:hover {
+    background: var(--bg-secondary);
+  }
+}
+
 /* 响应式 */
 @media (max-width: 640px) {
   .container {

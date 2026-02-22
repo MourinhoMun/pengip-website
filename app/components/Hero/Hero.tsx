@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { ArrowRight, Bot } from 'lucide-react';
 import Image from 'next/image';
 import { useLanguage } from '@/app/i18n';
@@ -9,6 +10,8 @@ import styles from './Hero.module.scss';
 export default function Hero() {
   const { t, lang } = useLanguage();
   const hero = t.hero as any;
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-80px' });
 
   const stats = [
     { value: '10+', label: hero.stats.years },
@@ -17,12 +20,12 @@ export default function Hero() {
   ];
 
   return (
-    <section className={styles.hero} id="about">
+    <section className={styles.hero} id="about" ref={ref}>
       <div className={styles.container}>
         <motion.div
           className={styles.content}
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
         >
           {/* 头像 */}
@@ -30,7 +33,7 @@ export default function Hero() {
             key="avatar"
             className={styles.avatarWrapper}
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: 0.1, duration: 0.4 }}
           >
             <Image
@@ -39,7 +42,6 @@ export default function Hero() {
               width={120}
               height={120}
               className={styles.avatar}
-              priority
             />
           </motion.div>
 
@@ -48,7 +50,7 @@ export default function Hero() {
             key="badge"
             className={styles.badge}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            animate={isInView ? { opacity: 1 } : {}}
             transition={{ delay: 0.2, duration: 0.4 }}
           >
             <span>{hero.badge}</span>
@@ -59,7 +61,7 @@ export default function Hero() {
             key="title"
             className={styles.title}
             initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.25, duration: 0.5 }}
           >
             {hero.greeting} <span className={styles.highlight}>{hero.name}</span>
@@ -69,7 +71,7 @@ export default function Hero() {
             key="subtitle"
             className={styles.subtitle}
             initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
             {hero.title}
@@ -80,7 +82,7 @@ export default function Hero() {
             key="description"
             className={styles.description}
             initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.35, duration: 0.5 }}
           >
             {hero.description}
@@ -93,7 +95,7 @@ export default function Hero() {
             key="cta"
             className={styles.ctaButtons}
             initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
             <a href="#contact" className={styles.primaryBtn}>
@@ -101,7 +103,6 @@ export default function Hero() {
               <ArrowRight size={16} />
             </a>
 
-            {/* 重点强调的按钮 - 定位到工具列表 */}
             <a href="#tools" className={styles.highlightBtn}>
               <Bot size={18} />
               {hero.tryAI}
@@ -117,7 +118,7 @@ export default function Hero() {
         <motion.div
           className={styles.stats}
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.5, duration: 0.5 }}
         >
           {stats.map((stat) => (
@@ -133,7 +134,7 @@ export default function Hero() {
       <motion.div
         className={styles.scrollIndicator}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        animate={isInView ? { opacity: 1 } : {}}
         transition={{ delay: 0.7, duration: 0.5 }}
       >
         <div className={styles.mouse}>

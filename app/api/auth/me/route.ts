@@ -24,6 +24,7 @@ export async function GET() {
         points: true,
         inviteCode: true,
         role: true,
+        subscriptionExpiresAt: true,
         createdAt: true,
       },
     });

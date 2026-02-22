@@ -10,6 +10,7 @@ interface User {
   points: number;
   inviteCode: string;
   role: string;
+  subscriptionExpiresAt?: string | null;
 }
 
 interface AuthContextType {

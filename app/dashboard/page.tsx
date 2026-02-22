@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../i18n';
-import { Coins, Gift, Copy, Check, ExternalLink, History, LogOut, ArrowLeft, Sparkles, Download, Key } from 'lucide-react';
+import { Coins, Gift, Copy, Check, ExternalLink, History, LogOut, ArrowLeft, Sparkles, Download, Key, Crown, X } from 'lucide-react';
 import styles from './dashboard.module.scss';
 
 interface Tool {
@@ -48,6 +48,7 @@ export default function DashboardPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [activateCode, setActivateCode] = useState('');
   const [activating, setActivating] = useState(false);
+  const [showRenewalModal, setShowRenewalModal] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -100,6 +101,7 @@ export default function DashboardPage() {
         setMessage({ type: 'success', text: data.message || '激活成功！' });
         setActivateCode('');
         fetchActivations();
+        await refreshUser();
       } else {
         setMessage({ type: 'error', text: data.error || '激活失败' });
       }
@@ -145,7 +147,11 @@ export default function DashboardPage() {
           window.location.href = data.toolUrl;
         }
       } else {
-        setMessage({ type: 'error', text: data.error || '使用失败' });
+        if (data.subscriptionRequired) {
+          setShowRenewalModal(true);
+        } else {
+          setMessage({ type: 'error', text: data.error || '使用失败' });
+        }
       }
     } catch {
       setMessage({ type: 'error', text: '网络错误，请重试' });
@@ -196,6 +202,9 @@ export default function DashboardPage() {
 
   if (!user) return null;
 
+  const isSubscribed = !!(user.subscriptionExpiresAt && new Date(user.subscriptionExpiresAt) > new Date());
+  const subscriptionExpiry = user.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt) : null;
+
   return (
     <div className={styles.dashboardPage}>
       {/* 顶部导航 */}
@@ -229,6 +238,16 @@ export default function DashboardPage() {
               {user.email && <span>{user.email}</span>}
               {user.phone && <span>{user.phone}</span>}
             </p>
+            {isSubscribed && subscriptionExpiry ? (
+              <div className={styles.subBadgeActive}>
+                <Crown size={11} />
+                年卡有效 · 至 {subscriptionExpiry.toLocaleDateString('zh-CN')}
+              </div>
+            ) : (
+              <div className={styles.subBadgeExpired}>
+                {subscriptionExpiry ? '年卡已过期' : '未激活年卡'}
+              </div>
+            )}
           </div>
           <div className={styles.pointsBadge}>
             <Coins size={20} />
@@ -293,10 +312,10 @@ export default function DashboardPage() {
         <section className={styles.activateSection}>
           <div className={styles.toolsHeader}>
             <Key size={22} />
-            <h2>{lang === 'zh' ? '激活工具' : 'Activate Tool'}</h2>
+            <h2>{lang === 'zh' ? '激活年卡' : 'Activate'}</h2>
           </div>
           <p className={styles.toolsDesc}>
-            {lang === 'zh' ? '输入激活码，解锁对应工具的下载和使用权限' : 'Enter activation code to unlock tool download'}
+            {lang === 'zh' ? '输入年卡激活码，激活后可使用所有工具，有效期 365 天' : 'Enter annual card code to unlock all tools for 365 days'}
           </p>
           <div className={styles.activateRow}>
             <input
@@ -306,6 +325,7 @@ export default function DashboardPage() {
               placeholder={lang === 'zh' ? '请输入激活码，如 XXXX-XXXX-XXXX-XXXX' : 'Enter code like XXXX-XXXX-XXXX-XXXX'}
               className={styles.activateInput}
               onKeyDown={(e) => e.key === 'Enter' && handleActivate()}
+              id="activateInput"
             />
             <button
               onClick={handleActivate}
@@ -315,37 +335,6 @@ export default function DashboardPage() {
               {activating ? '...' : (lang === 'zh' ? '激活' : 'Activate')}
             </button>
           </div>
-
-          {/* 已激活工具列表 */}
-          {activations.length > 0 && (
-            <div className={styles.activatedList}>
-              <h3 style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
-                {lang === 'zh' ? '已激活工具' : 'Activated Tools'}
-              </h3>
-              {activations.map((a) => (
-                <div key={a.id} className={styles.activatedItem}>
-                  <span className={styles.activatedIcon}>{a.tool.icon || '🔧'}</span>
-                  <span className={styles.activatedName}>
-                    {lang === 'en' && a.tool.nameEn ? a.tool.nameEn : a.tool.name}
-                  </span>
-                  {a.tool.downloadUrl && (
-                    <a
-                      href={a.tool.downloadUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.downloadBtn}
-                    >
-                      <Download size={14} />
-                      {lang === 'zh' ? '下载' : 'Download'}
-                    </a>
-                  )}
-                  <span className={styles.activatedDate}>
-                    {a.usedAt ? new Date(a.usedAt).toLocaleDateString('zh-CN') : ''}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
         </section>
 
         {/* 工具列表 */}
@@ -363,7 +352,6 @@ export default function DashboardPage() {
               const isUsing = usingTool === tool.id;
               const canAfford = user.points >= tool.points;
               const isComing = tool.status === 'coming';
-              const isActivated = activations.some(a => a.tool.id === tool.id);
 
               return (
                 <div key={tool.id} className={`${styles.toolCard} ${isComing ? styles.coming : ''}`}>
@@ -375,16 +363,16 @@ export default function DashboardPage() {
                   <div className={styles.toolFooter}>
                     <span className={styles.toolCost}>
                       <Coins size={14} />
-                      {isActivated ? (lang === 'zh' ? '已激活' : 'Activated') : `${tool.points} ${lang === 'zh' ? '积分' : 'pts'}`}
+                      {`${tool.points} ${lang === 'zh' ? '积分' : 'pts'}`}
                     </span>
                     <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
-                      {tool.downloadUrl && isActivated && (
-                        <a href={tool.downloadUrl} target="_blank" rel="noopener noreferrer" className={styles.downloadSmBtn} title={lang === 'zh' ? '下载' : 'Download'}>
-                          <Download size={14} />
-                        </a>
-                      )}
                       {isComing ? (
                         <span className={styles.comingBadge}>{lang === 'zh' ? '即将上线' : 'Coming'}</span>
+                      ) : !isSubscribed ? (
+                        <button className={`${styles.useBtn} ${styles.renewBtn}`} onClick={() => setShowRenewalModal(true)}>
+                          <Crown size={14} />
+                          {lang === 'zh' ? '续费年卡' : 'Renew'}
+                        </button>
                       ) : tool.url ? (
                         <a href={tool.url} className={styles.useBtn}>
                           <ExternalLink size={14} />
@@ -415,6 +403,42 @@ export default function DashboardPage() {
           )}
         </section>
       </div>
+
+      {/* 续费引导弹窗 */}
+      {showRenewalModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowRenewalModal(false)}>
+          <div className={styles.renewalModal} onClick={(e) => e.stopPropagation()}>
+            <button className={styles.modalClose} onClick={() => setShowRenewalModal(false)}>
+              <X size={18} />
+            </button>
+            <div className={styles.modalIcon}>👑</div>
+            <h3 className={styles.modalTitle}>
+              {subscriptionExpiry ? '年卡已到期' : '尚未激活年卡'}
+            </h3>
+            <p className={styles.modalBody}>
+              {subscriptionExpiry
+                ? `您的年卡已于 ${subscriptionExpiry.toLocaleDateString('zh-CN')} 到期，续费后可继续使用所有工具。`
+                : '使用工具需要激活年卡，请联系代理获取激活码。'}
+            </p>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.modalPrimaryBtn}
+                onClick={() => {
+                  setShowRenewalModal(false);
+                  document.getElementById('activateInput')?.focus();
+                  document.getElementById('activateInput')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }}
+              >
+                <Key size={15} />
+                输入激活码
+              </button>
+              <button className={styles.modalSecondaryBtn} onClick={() => setShowRenewalModal(false)}>
+                稍后再说
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

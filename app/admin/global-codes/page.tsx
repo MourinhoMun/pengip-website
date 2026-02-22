@@ -21,7 +21,7 @@ export default function GlobalCodesPage() {
   const [codes, setCodes] = useState<GlobalCode[]>([]);
   const [loading, setLoading] = useState(true);
   // 生成表单
-  const [codeType, setCodeType] = useState<'license' | 'recharge'>('recharge');
+  const [codeType, setCodeType] = useState<'annual' | 'recharge'>('annual');
   const [points, setPoints] = useState(100);
   const [count, setCount] = useState(10);
   const [note, setNote] = useState('');
@@ -56,13 +56,13 @@ export default function GlobalCodesPage() {
   };
 
   const handleGenerate = async () => {
-    if (points <= 0) { alert('积分必须大于0'); return; }
+    if (codeType === 'recharge' && points <= 0) { alert('积分必须大于0'); return; }
     setGenerating(true);
     try {
       const res = await fetch('/api/admin/global-codes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: codeType, points, count, note: note || null }),
+        body: JSON.stringify({ type: codeType, points: codeType === 'annual' ? 0 : points, count, note: note || null }),
       });
       if (res.ok) {
         setNote('');
@@ -96,7 +96,7 @@ export default function GlobalCodesPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const typeName = filterType === 'license' ? '许可证码' : filterType === 'recharge' ? '充值码' : '全局码';
+    const typeName = filterType === 'annual' ? '年卡码' : filterType === 'recharge' ? '充值码' : '全局码';
     a.download = `${typeName}_${new Date().toISOString().slice(0, 10)}.txt`;
     a.click();
     URL.revokeObjectURL(url);
@@ -108,8 +108,8 @@ export default function GlobalCodesPage() {
   return (
     <div>
       <div className={styles.pageHeader}>
-        <h1>充值码管理</h1>
-        <p>管理许可证码和充值码，批量生成后导出到发卡平台</p>
+        <h1>激活码管理</h1>
+        <p>管理年卡激活码和积分充值码，批量生成后分发给代理</p>
       </div>
 
       {/* 生成区域 */}
@@ -122,14 +122,15 @@ export default function GlobalCodesPage() {
             <label style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '0.3rem' }}>类型</label>
             <select
               value={codeType}
-              onChange={(e) => setCodeType(e.target.value as 'license' | 'recharge')}
+              onChange={(e) => setCodeType(e.target.value as 'annual' | 'recharge')}
               className={styles.input}
               style={{ width: 'auto', minWidth: '120px' }}
             >
+              <option value="annual">年卡码</option>
               <option value="recharge">充值码</option>
-              <option value="license">许可证码</option>
             </select>
           </div>
+          {codeType === 'recharge' && (
           <div>
             <label style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '0.3rem' }}>积分</label>
             <input
@@ -140,6 +141,7 @@ export default function GlobalCodesPage() {
               style={{ width: '100px' }}
             />
           </div>
+          )}
           <div>
             <label style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '0.3rem' }}>数量</label>
             <input
@@ -170,8 +172,8 @@ export default function GlobalCodesPage() {
           </button>
         </div>
         <div style={{ marginTop: '0.75rem', fontSize: '0.8rem', color: '#94a3b8' }}>
-          <strong>许可证码</strong>：用户首次激活客户端软件（创建账户+充积分）。
-          <strong>充值码</strong>：已激活用户补充积分。发卡平台一般卖充值码。
+          <strong>年卡码</strong>：激活后账号有效期 +365 天，首次激活赠 1000 积分。
+          <strong style={{ marginLeft: '0.75rem' }}>充值码</strong>：给已有用户补充积分。
         </div>
       </div>
 
@@ -206,7 +208,7 @@ export default function GlobalCodesPage() {
             style={{ width: 'auto', minWidth: '100px' }}
           >
             <option value="">全部类型</option>
-            <option value="license">许可证码</option>
+            <option value="annual">年卡码</option>
             <option value="recharge">充值码</option>
           </select>
           <select
@@ -255,11 +257,13 @@ export default function GlobalCodesPage() {
                       <code style={{ fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.5px', color: '#1e293b' }}>{c.code}</code>
                     </td>
                     <td>
-                      <span className={`${styles.badge} ${c.type === 'license' ? styles.badgeInfo : styles.badgeWarning}`}>
-                        {c.type === 'license' ? '许可证' : '充值'}
+                      <span className={`${styles.badge} ${c.type === 'annual' ? styles.badgeInfo : styles.badgeWarning}`}>
+                        {c.type === 'annual' ? '年卡' : '充值'}
                       </span>
                     </td>
-                    <td style={{ fontWeight: 600, color: 'var(--primary)' }}>{c.points}</td>
+                    <td style={{ fontWeight: 600, color: 'var(--primary)' }}>
+                      {c.type === 'annual' ? <span style={{ color: '#94a3b8' }}>—</span> : c.points}
+                    </td>
                     <td>
                       <span className={`${styles.badge} ${c.status === 'unused' ? styles.badgeSuccess : styles.badgeDanger}`}>
                         {c.status === 'unused' ? '未使用' : '已使用'}
