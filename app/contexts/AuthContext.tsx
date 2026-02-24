@@ -101,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
       setUser(null);
+      localStorage.removeItem('pengip_token'); // 清除子应用 token，防止下一个用户看到旧数据
     } catch {
       // ignore
     }
