@@ -241,7 +241,7 @@ export const translations: Record<Language, Translations> = {
       email: '邮件',
       wechat: '微信',
       redNote: '小红书',
-      redNoteStats: '5万+ 粉丝',
+      redNoteStats: '5万+ 赞',
       viewProfile: '查看主页',
       scanWechat: '扫码加微信',
       scanHint: '备注“IP咨询”',
