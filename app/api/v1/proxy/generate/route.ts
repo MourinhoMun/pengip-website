@@ -1,28 +1,17 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/app/lib/db';
-import { verify } from 'jsonwebtoken';
+import { verifyBearerToken } from '@/app/lib/auth';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default-secret-change-in-production';
-const COST_PER_IMAGE = 10; // Make this configurable later
+const COST_PER_IMAGE = 10;
 
 export async function POST(request: NextRequest) {
     try {
-        // 1. 鉴权
-        const authHeader = request.headers.get('Authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return NextResponse.json({ error: 'Missing token' }, { status: 401 });
+        const user = await verifyBearerToken(request.headers.get('Authorization'));
+        if (!user) {
+            return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
         }
-        const token = authHeader.split(' ')[1];
-
-        let decoded;
-        try {
-            decoded = verify(token, JWT_SECRET) as any;
-        } catch (e) {
-            return NextResponse.json({ error: 'Invalid token' }, { status: 403 });
-        }
-
-        const { userId } = decoded;
+        const { userId } = user;
 
         // 2. 解析请求
         const body = await request.json();

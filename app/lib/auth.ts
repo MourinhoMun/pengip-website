@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
+import prisma from '@/app/lib/db';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default-secret-change-in-production';
 
@@ -59,4 +60,26 @@ export async function setAuthCookie(token: string): Promise<void> {
 export async function clearAuthCookie(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete('auth-token');
+}
+
+// 验证 Bearer token 并检查是否是当前有效 token（单设备限制）
+export async function verifyBearerToken(authHeader: string | null): Promise<{ userId: string; role: string } | null> {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+  const token = authHeader.split(' ')[1];
+
+  let decoded: any;
+  try {
+    decoded = jwt.verify(token, JWT_SECRET);
+  } catch {
+    return null;
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: decoded.userId },
+    select: { id: true, role: true, currentToken: true },
+  });
+
+  if (!user || user.currentToken !== token) return null;
+
+  return { userId: user.id, role: user.role };
 }

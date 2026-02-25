@@ -54,6 +54,12 @@ export async function POST(request: NextRequest) {
             { expiresIn: '365d' }
         );
 
+        // 保存当前 token，踢掉旧设备
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { currentToken: token },
+        });
+
         return NextResponse.json({
             success: true,
             token,

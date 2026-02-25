@@ -23,6 +23,7 @@ model User {
   inviteCode    String    @unique @default(cuid()) // 邀请码
   invitedBy     String?   // 邀请人ID
   subscriptionExpiresAt DateTime? // 订阅到期时间（年卡激活后设置）
+  currentToken  String?   // 当前有效的登录 token（单设备限制）
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
