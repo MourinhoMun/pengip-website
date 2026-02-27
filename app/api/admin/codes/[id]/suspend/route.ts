@@ -16,7 +16,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   if (!code) return NextResponse.json({ error: '激活码不存在' }, { status: 404 });
 
   const isSuspended = code.status === 'suspended';
-  const newStatus = isSuspended ? (code.usedCount > 0 ? 'used' : 'active') : 'suspended';
+  // 恢复时：根据 usedCount 和 maxUses 判断正确状态
+  // usedCount >= maxUses → 'used'（已用完），否则 → 'active'（仍可用）
+  // 未使用过的码（usedCount === 0）恢复为 'unused'
+  const newStatus = isSuspended
+    ? (code.usedCount === 0 ? 'unused' : code.usedCount >= code.maxUses ? 'used' : 'active')
+    : 'suspended';
 
   const updated = await prisma.activationCode.update({
     where: { id },
