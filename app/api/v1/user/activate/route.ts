@@ -129,6 +129,40 @@ export async function POST(request: NextRequest) {
                     where: { id: user.id },
                     data: { points: { increment: activationCode.points } },
                 });
+            } else if (activationCode.type === 'trial') {
+                // 试用码：7天试用 + 100积分
+                if (!user) {
+                    user = await tx.user.create({
+                        data: {
+                            deviceId,
+                            password: 'device-login',
+                            name: `Trial User ${deviceId.substring(0, 6)}`,
+                            points: 100,
+                            role: 'user',
+                        },
+                    });
+                }
+                const now = new Date();
+                const base = user.subscriptionExpiresAt && user.subscriptionExpiresAt > now
+                    ? user.subscriptionExpiresAt
+                    : now;
+                const newExpiry = new Date(base.getTime() + 7 * 24 * 60 * 60 * 1000);
+                user = await tx.user.update({
+                    where: { id: user.id },
+                    data: {
+                        subscriptionExpiresAt: newExpiry,
+                        points: { increment: 100 },
+                    },
+                });
+                await tx.pointTransaction.create({
+                    data: {
+                        userId: user.id,
+                        amount: 100,
+                        type: 'recharge',
+                        description: '试用码激活赠送积分',
+                        relatedId: activationCode.id,
+                    },
+                });
             } else {
                 throw new Error('Unsupported activation code type: ' + activationCode.type);
             }

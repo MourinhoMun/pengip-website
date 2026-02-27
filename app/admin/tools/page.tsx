@@ -645,6 +645,21 @@ export default function ToolsPage() {
               </div>
 
               <div className={styles.formGroup}>
+                <label>教程正文内容（HTML，支持图文）</label>
+                <textarea
+                  value={(formData as any).tutorialContent || ''}
+                  onChange={(e) => setFormData({ ...formData, tutorialContent: e.target.value } as any)}
+                  className={styles.input}
+                  placeholder="在此粘贴教程 HTML 内容，支持 <h2>、<p>、<img>、<ul> 等标签..."
+                  rows={12}
+                  style={{ fontFamily: 'monospace', fontSize: '0.82rem', resize: 'vertical' }}
+                />
+                <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+                  支持 HTML 标签：&lt;h2&gt; 标题、&lt;p&gt; 段落、&lt;img src="..."&gt; 图片、&lt;ul&gt;&lt;li&gt; 列表、&lt;strong&gt; 加粗
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
                 <label>API 调用地址</label>
                 <input
                   type="text"

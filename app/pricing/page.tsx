@@ -3,13 +3,23 @@
 import { motion } from 'framer-motion';
 import { Check, Coins, MessageCircle, Zap, RefreshCw, Users, Star } from 'lucide-react';
 import { Navbar, Footer } from '@/app/components';
+import { useBrand } from '@/app/hooks/useBrand';
 import styles from './pricing.module.scss';
 
 export default function PricingPage() {
-  const features = [
+  const brand = useBrand();
+
+  const features = brand.isYimei ? [
+    { icon: <Zap size={18} />, text: '全部AI医美工具一年激活使用权' },
+    { icon: <RefreshCw size={18} />, text: '工具持续迭代更新，始终保持最新' },
+    { icon: <Star size={18} />, text: '专属医美行业 AI 工具，持续新增' },
+    { icon: <Users size={18} />, text: '专属会员交流群，获得一手资讯' },
+    { icon: <Check size={18} />, text: '优先体验内测新功能' },
+    { icon: <Check size={18} />, text: '专属客服支持' },
+  ] : [
     { icon: <Zap size={18} />, text: '全部AI工具包一年激活使用权' },
     { icon: <RefreshCw size={18} />, text: '工具持续迭代更新，始终保持最新' },
-    { icon: <Star size={18} />, text: '融合鹏哥每时每刻的实战新经验' },
+    { icon: <Star size={18} />, text: '持续更新迭代，紧跟行业前沿' },
     { icon: <Users size={18} />, text: '专属会员交流群，获得一手资讯' },
     { icon: <Check size={18} />, text: '优先体验内测新功能' },
     { icon: <Check size={18} />, text: '专属客服支持' },
@@ -19,7 +29,6 @@ export default function PricingPage() {
     <>
       <Navbar />
       <main className={styles.main}>
-        {/* Hero */}
         <section className={styles.hero}>
           <motion.div
             className={styles.heroContent}
@@ -29,16 +38,18 @@ export default function PricingPage() {
           >
             <div className={styles.badge}>会员权益</div>
             <h1 className={styles.heroTitle}>
-              鹏哥工具箱<br />
+              {brand.isYimei ? '医美美工' : '鹏哥工具箱'}<br />
+
               <span className={styles.highlight}>会员定价说明</span>
             </h1>
             <p className={styles.heroSubtitle}>
-              加入年度会员，享受持续更新的 AI 效率工具，第一时间获取鹏哥最新实战经验
+              {brand.isYimei
+                ? '加入年度会员，享受持续更新的 AI 医美工具，提升内容创作效率'
+                : '加入年度会员，享受持续更新的 AI 效率工具，提升创作效率'}
             </p>
           </motion.div>
         </section>
 
-        {/* Pricing Card */}
         <section className={styles.pricingSection}>
           <div className={styles.container}>
             <motion.div
@@ -58,7 +69,6 @@ export default function PricingPage() {
                   </div>
                   <p className={styles.priceNote}>一次付费，全年无忧</p>
                 </div>
-
                 <ul className={styles.featureList}>
                   {features.map((f, i) => (
                     <li key={i} className={styles.featureItem}>
@@ -67,16 +77,12 @@ export default function PricingPage() {
                     </li>
                   ))}
                 </ul>
-
-                <a href="#join" className={styles.ctaBtn}>
-                  立即联系购买
-                </a>
+                <a href="#join" className={styles.ctaBtn}>立即联系购买</a>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Points System */}
         <section className={styles.pointsSection}>
           <div className={styles.container}>
             <motion.div
@@ -86,13 +92,9 @@ export default function PricingPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <div className={styles.pointsIcon}>
-                <Coins size={32} />
-              </div>
+              <div className={styles.pointsIcon}><Coins size={32} /></div>
               <h2 className={styles.sectionTitle}>积分规则</h2>
-              <p className={styles.sectionSubtitle}>
-                平台同时支持按量付费，通过积分灵活使用工具
-              </p>
+              <p className={styles.sectionSubtitle}>平台同时支持按量付费，通过积分灵活使用工具</p>
               <div className={styles.pointsGrid}>
                 <div className={styles.pointCard}>
                   <div className={styles.pointValue}>10 积分</div>
@@ -111,7 +113,6 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* How to Join */}
         <section className={styles.joinSection} id="join">
           <div className={styles.container}>
             <motion.div
@@ -123,20 +124,16 @@ export default function PricingPage() {
             >
               <h2 className={styles.sectionTitle}>如何购买会员</h2>
               <p className={styles.sectionSubtitle}>
-                添加鹏哥微信，备注「年费会员」即可咨询开通
+                添加微信，备注「年费会员」即可咨询开通
               </p>
               <div className={styles.contactCard}>
-                <div className={styles.contactIcon}>
-                  <MessageCircle size={28} />
-                </div>
+                <div className={styles.contactIcon}><MessageCircle size={28} /></div>
                 <div className={styles.contactInfo}>
                   <div className={styles.contactLabel}>微信号</div>
                   <div className={styles.contactValue}>peng_ip</div>
                 </div>
               </div>
-              <p className={styles.joinNote}>
-                * 会员到期前会提醒续费，续费价格与首次相同
-              </p>
+              <p className={styles.joinNote}>* 会员到期前会提醒续费，续费价格与首次相同</p>
             </motion.div>
           </div>
         </section>

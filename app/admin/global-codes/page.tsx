@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Copy, Check, Download, X, Key } from 'lucide-react';
+import { Plus, Copy, Check, Download, X, Key, Search } from 'lucide-react';
 import styles from '../admin.module.scss';
 
 interface GlobalCode {
@@ -21,7 +21,7 @@ export default function GlobalCodesPage() {
   const [codes, setCodes] = useState<GlobalCode[]>([]);
   const [loading, setLoading] = useState(true);
   // 生成表单
-  const [codeType, setCodeType] = useState<'annual' | 'recharge'>('annual');
+  const [codeType, setCodeType] = useState<'annual' | 'recharge' | 'trial'>('annual');
   const [points, setPoints] = useState(100);
   const [count, setCount] = useState(10);
   const [note, setNote] = useState('');
@@ -29,6 +29,7 @@ export default function GlobalCodesPage() {
   // 筛选
   const [filterType, setFilterType] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  const [searchCode, setSearchCode] = useState('');
   // 复制
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
@@ -42,6 +43,7 @@ export default function GlobalCodesPage() {
       const params = new URLSearchParams();
       if (filterType) params.set('type', filterType);
       if (filterStatus) params.set('status', filterStatus);
+      if (searchCode.trim()) params.set('search', searchCode.trim());
       const query = params.toString() ? `?${params.toString()}` : '';
       const res = await fetch(`/api/admin/global-codes${query}`);
       if (res.ok) {
@@ -128,6 +130,7 @@ export default function GlobalCodesPage() {
             >
               <option value="annual">年卡码</option>
               <option value="recharge">充值码</option>
+              <option value="trial">试用码</option>
             </select>
           </div>
           {codeType === 'recharge' && (
@@ -174,6 +177,7 @@ export default function GlobalCodesPage() {
         <div style={{ marginTop: '0.75rem', fontSize: '0.8rem', color: '#94a3b8' }}>
           <strong>年卡码</strong>：激活后账号有效期 +365 天，首次激活赠 1000 积分。
           <strong style={{ marginLeft: '0.75rem' }}>充值码</strong>：给已有用户补充积分。
+          <strong style={{ marginLeft: '0.75rem' }}>试用码</strong>：7天试用期 + 100积分，一码一用。
         </div>
       </div>
 
@@ -201,6 +205,21 @@ export default function GlobalCodesPage() {
 
         {/* 筛选 + 操作 */}
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative' }}>
+            <Search size={14} style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+            <input
+              type="text"
+              value={searchCode}
+              onChange={(e) => setSearchCode(e.target.value.toUpperCase())}
+              onKeyDown={(e) => e.key === 'Enter' && fetchCodes()}
+              placeholder="搜索激活码..."
+              className={styles.input}
+              style={{ paddingLeft: '28px', width: '200px' }}
+            />
+          </div>
+          <button onClick={fetchCodes} className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSmall}`}>
+            <Search size={14} /> 搜索
+          </button>
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
@@ -210,6 +229,7 @@ export default function GlobalCodesPage() {
             <option value="">全部类型</option>
             <option value="annual">年卡码</option>
             <option value="recharge">充值码</option>
+            <option value="trial">试用码</option>
           </select>
           <select
             value={filterStatus}
@@ -257,8 +277,8 @@ export default function GlobalCodesPage() {
                       <code style={{ fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.5px', color: '#1e293b' }}>{c.code}</code>
                     </td>
                     <td>
-                      <span className={`${styles.badge} ${c.type === 'annual' ? styles.badgeInfo : styles.badgeWarning}`}>
-                        {c.type === 'annual' ? '年卡' : '充值'}
+                      <span className={`${styles.badge} ${c.type === 'annual' ? styles.badgeInfo : c.type === 'trial' ? styles.badgeWarning : styles.badgeWarning}`}>
+                        {c.type === 'annual' ? '年卡' : c.type === 'trial' ? '试用' : '充值'}
                       </span>
                     </td>
                     <td style={{ fontWeight: 600, color: 'var(--primary)' }}>

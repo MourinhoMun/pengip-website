@@ -1,8 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Plus, Minus, X, UserPlus } from 'lucide-react';
+import { Search, Plus, Minus, X, UserPlus, Key, Ban, CheckCircle } from 'lucide-react';
 import styles from '../admin.module.scss';
+
+interface ActivationCode {
+  id: string;
+  code: string;
+  type: string;
+  points: number;
+  status: string;
+  note: string | null;
+  usedAt: string | null;
+  createdAt: string;
+}
 
 interface User {
   id: string;
@@ -33,6 +44,11 @@ export default function UsersPage() {
   const [search, setSearch] = useState('');
   const [adjustUserId, setAdjustUserId] = useState<string | null>(null);
   const [adjustAmount, setAdjustAmount] = useState('');
+  // 激活码弹窗
+  const [codesUserId, setCodesUserId] = useState<string | null>(null);
+  const [codesUserName, setCodesUserName] = useState('');
+  const [userCodes, setUserCodes] = useState<ActivationCode[]>([]);
+  const [codesLoading, setCodesLoading] = useState(false);
   // 新增用户
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [createForm, setCreateForm] = useState({ email: '', phone: '', name: '', password: '', points: 100, role: 'user' });
@@ -85,6 +101,31 @@ export default function UsersPage() {
     } catch (error) {
       console.error('Adjust points error:', error);
     }
+  };
+
+  const handleViewCodes = async (userId: string, userName: string) => {
+    setCodesUserId(userId);
+    setCodesUserName(userName);
+    setCodesLoading(true);
+    setUserCodes([]);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/codes`);
+      if (res.ok) {
+        const data = await res.json();
+        setUserCodes(data.codes);
+      }
+    } catch {}
+    setCodesLoading(false);
+  };
+
+  const handleSuspendCode = async (codeId: string) => {
+    try {
+      const res = await fetch(`/api/admin/codes/${codeId}/suspend`, { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        setUserCodes(prev => prev.map(c => c.id === codeId ? { ...c, status: data.status } : c));
+      }
+    } catch {}
   };
 
   const handleCreateUser = async (e: React.FormEvent) => {
@@ -227,6 +268,13 @@ export default function UsersPage() {
                         ) : (
                           <div className={styles.actions}>
                             <button
+                              onClick={() => handleViewCodes(user.id, user.name || user.email || user.phone || user.id)}
+                              className={`${styles.btn} ${styles.btnSecondary} ${styles.btnSmall}`}
+                              title="查看激活码"
+                            >
+                              <Key size={14} />
+                            </button>
+                            <button
                               onClick={() => setAdjustUserId(user.id)}
                               className={`${styles.btn} ${styles.btnSecondary} ${styles.btnSmall}`}
                               title="调整积分"
@@ -267,6 +315,71 @@ export default function UsersPage() {
           </>
         )}
       </div>
+
+      {/* 激活码弹窗 */}
+      {codesUserId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: '1rem' }}>
+          <div style={{ background: 'white', borderRadius: '12px', padding: '1.5rem', width: '100%', maxWidth: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>
+                <Key size={16} style={{ verticalAlign: 'middle', marginRight: '0.5rem' }} />
+                {codesUserName} 的激活码
+              </h2>
+              <button onClick={() => setCodesUserId(null)}><X size={20} /></button>
+            </div>
+            {codesLoading ? (
+              <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>加载中...</div>
+            ) : userCodes.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>该用户暂无激活码记录</div>
+            ) : (
+              <div style={{ overflowY: 'auto' }}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>激活码</th>
+                      <th>类型</th>
+                      <th>积分</th>
+                      <th>状态</th>
+                      <th>使用时间</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {userCodes.map(c => (
+                      <tr key={c.id}>
+                        <td><code style={{ fontSize: '0.8rem', fontWeight: 600 }}>{c.code}</code></td>
+                        <td>
+                          <span className={`${styles.badge} ${c.type === 'annual' ? styles.badgeInfo : c.type === 'trial' ? styles.badgeWarning : styles.badgeWarning}`}>
+                            {c.type === 'annual' ? '年卡' : c.type === 'trial' ? '试用' : '充值'}
+                          </span>
+                        </td>
+                        <td style={{ fontWeight: 600, color: 'var(--primary)' }}>{c.points || '—'}</td>
+                        <td>
+                          <span className={`${styles.badge} ${c.status === 'suspended' ? styles.badgeDanger : styles.badgeSuccess}`}>
+                            {c.status === 'suspended' ? '已暂停' : c.status === 'used' ? '已使用' : '正常'}
+                          </span>
+                        </td>
+                        <td style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                          {c.usedAt ? new Date(c.usedAt).toLocaleDateString('zh-CN') : '—'}
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => handleSuspendCode(c.id)}
+                            className={`${styles.btn} ${c.status === 'suspended' ? styles.btnPrimary : styles.btnDanger} ${styles.btnSmall}`}
+                            title={c.status === 'suspended' ? '恢复权限' : '暂停权限'}
+                          >
+                            {c.status === 'suspended' ? <><CheckCircle size={12} /> 恢复</> : <><Ban size={12} /> 暂停</>}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* 新增用户弹窗 */}
       {showCreateForm && (

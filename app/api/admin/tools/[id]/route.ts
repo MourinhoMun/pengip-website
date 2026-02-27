@@ -40,6 +40,7 @@ export async function PUT(
         url: body.url,
         downloadUrl: body.downloadUrl,
         tutorialUrl: body.tutorialUrl,
+        tutorialContent: body.tutorialContent || null,
         status: body.status,
         sortOrder: body.sortOrder,
         visible: body.visible !== undefined ? body.visible : undefined,
