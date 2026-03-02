@@ -28,6 +28,7 @@ function getOrCreateSessionId(): string {
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
+  const [visible, setVisible] = useState(false); // 气泡完全隐藏
   const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -141,6 +142,7 @@ export default function ChatWidget() {
   };
 
   return (
+    visible && (
     <div className={styles.chatWidget}>
       {open && (
         <div className={styles.chatBox}>
@@ -195,5 +197,6 @@ export default function ChatWidget() {
         {!open && <span className={styles.badge} />}
       </div>
     </div>
+    )
   );
 }

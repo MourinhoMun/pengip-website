@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     // 调用 Claude API（流式）
     const anthropicBaseUrl = process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com';
-    const anthropicApiKey = process.env.ANTHROPIC_API_KEY || '';
+    const anthropicApiKey = process.env.ANTHROPIC_AUTH_TOKEN || '';
 
     const claudeResponse = await fetch(`${anthropicBaseUrl}/v1/messages`, {
       method: 'POST',
