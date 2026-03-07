@@ -193,6 +193,46 @@ export async function POST(request: NextRequest) {
                         },
                     });
                 }
+            } else if (activationCode.type === 'monthly') {
+                // 月卡码：30天订阅 + 1500积分
+                if (!user) {
+                    user = await tx.user.create({
+                        data: {
+                            deviceId,
+                            password: 'device-login',
+                            name: `Device User ${deviceId.substring(0, 6)}`,
+                            points: 1500,
+                            role: 'user',
+                        },
+                    });
+                }
+
+                const now = new Date();
+                const base = user.subscriptionExpiresAt && user.subscriptionExpiresAt > now
+                    ? user.subscriptionExpiresAt
+                    : now;
+                const newExpiry = new Date(base.getTime() + 30 * 24 * 60 * 60 * 1000); // 30天
+                const isFirstActivation = !user.subscriptionExpiresAt;
+
+                user = await tx.user.update({
+                    where: { id: user.id },
+                    data: {
+                        subscriptionExpiresAt: newExpiry,
+                        ...(isFirstActivation ? { points: { increment: 1500 } } : {}),
+                    },
+                });
+
+                if (isFirstActivation) {
+                    await tx.pointTransaction.create({
+                        data: {
+                            userId: user.id,
+                            amount: 1500,
+                            type: 'recharge',
+                            description: '月卡激活赠送积分',
+                            relatedId: activationCode.id,
+                        },
+                    });
+                }
             } else {
                 throw new Error('Unsupported activation code type: ' + activationCode.type);
             }

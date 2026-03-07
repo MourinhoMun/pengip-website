@@ -63,12 +63,17 @@ export async function POST(request: NextRequest) {
         // Default device limit: annual codes allow 2 devices; others keep schema default.
         const maxUses = type === 'annual' ? 2 : undefined;
 
-        if (!['annual', 'recharge', 'trial'].includes(type)) {
-            return NextResponse.json({ error: 'Invalid type. Must be annual, recharge or trial' }, { status: 400 });
+        if (!['annual', 'recharge', 'trial', 'monthly'].includes(type)) {
+            return NextResponse.json({ error: 'Invalid type. Must be annual, monthly, recharge or trial' }, { status: 400 });
         }
 
         if (type === 'recharge' && (typeof points !== 'number' || points < 0)) {
             return NextResponse.json({ error: 'Invalid points' }, { status: 400 });
+        }
+
+        // monthly is fixed internally: 1500 points and 30 days subscription handled in activate route
+        if (type === 'monthly') {
+            // Keep points at 0 to avoid double-counting in pointTransaction later.
         }
 
         const codes: string[] = [];

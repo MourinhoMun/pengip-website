@@ -21,7 +21,7 @@ export default function GlobalCodesPage() {
   const [codes, setCodes] = useState<GlobalCode[]>([]);
   const [loading, setLoading] = useState(true);
   // 生成表单
-  const [codeType, setCodeType] = useState<'annual' | 'recharge' | 'trial'>('annual');
+  const [codeType, setCodeType] = useState<'annual' | 'monthly' | 'recharge' | 'trial'>('annual');
   const [points, setPoints] = useState(100);
   const [count, setCount] = useState(10);
   const [note, setNote] = useState('');
@@ -160,7 +160,15 @@ export default function GlobalCodesPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const typeName = filterType === 'annual' ? '年卡码' : filterType === 'recharge' ? '充值码' : '全局码';
+    const typeName = filterType === 'annual'
+      ? '年卡码'
+      : filterType === 'monthly'
+        ? '月卡码'
+        : filterType === 'recharge'
+          ? '充值码'
+          : filterType === 'trial'
+            ? '试用码'
+            : '全局码';
     a.download = `${typeName}_${new Date().toISOString().slice(0, 10)}.txt`;
     a.click();
     URL.revokeObjectURL(url);
@@ -186,11 +194,12 @@ export default function GlobalCodesPage() {
             <label style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '0.3rem' }}>类型</label>
             <select
               value={codeType}
-              onChange={(e) => setCodeType(e.target.value as 'annual' | 'recharge')}
+              onChange={(e) => setCodeType(e.target.value as 'annual' | 'monthly' | 'recharge' | 'trial')}
               className={styles.input}
               style={{ width: 'auto', minWidth: '120px' }}
             >
               <option value="annual">年卡码</option>
+              <option value="monthly">月卡码</option>
               <option value="recharge">充值码</option>
               <option value="trial">试用码</option>
             </select>
@@ -290,6 +299,7 @@ export default function GlobalCodesPage() {
           >
             <option value="">全部类型</option>
             <option value="annual">年卡码</option>
+            <option value="monthly">月卡码</option>
             <option value="recharge">充值码</option>
             <option value="trial">试用码</option>
           </select>
@@ -340,11 +350,11 @@ export default function GlobalCodesPage() {
                     </td>
                     <td>
                       <span className={`${styles.badge} ${c.type === 'annual' ? styles.badgeInfo : c.type === 'trial' ? styles.badgeWarning : styles.badgeWarning}`}>
-                        {c.type === 'annual' ? '年卡' : c.type === 'trial' ? '试用' : '充值'}
+                        {c.type === 'annual' ? '年卡' : c.type === 'monthly' ? '月卡' : c.type === 'trial' ? '试用' : '充值'}
                       </span>
                     </td>
                     <td style={{ fontWeight: 600, color: 'var(--primary)' }}>
-                      {c.type === 'annual' ? <span style={{ color: '#94a3b8' }}>—</span> : c.points}
+                      {c.type === 'annual' ? <span style={{ color: '#94a3b8' }}>—</span> : c.type === 'monthly' ? 1500 : c.points}
                     </td>
                     <td>
                       <span className={`${styles.badge} ${c.status === 'unused' ? styles.badgeSuccess : styles.badgeDanger}`}>
