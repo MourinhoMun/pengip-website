@@ -8,11 +8,14 @@
 const https = require('https');
 const { URL } = require('url');
 
-const YUNWU_KEY = 'sk-GOthcTYIVEdXznmrcdxs2CDV51lb9qalw5vMbSBxeFaQFG4f';
-const YUNWU_URL = 'https://yunwu.ai/v1/chat/completions';
-const MODEL = 'gpt-4o';
-const PUBLISH_TOKEN = '1f4e5031435de154b78932eaff4566440458ccfa6167a0f00011c9ad83747771';
-const PUBLISH_URL = 'https://pengip.com/api/publish-article';
+const YUNWU_KEY = process.env.YUNWU_KEY || '';
+const YUNWU_URL = process.env.YUNWU_URL || 'https://yunwu.ai/v1/chat/completions';
+const MODEL = process.env.YUNWU_MODEL || 'gpt-4o';
+const PUBLISH_TOKEN = process.env.PUBLISH_TOKEN || '';
+const PUBLISH_URL = process.env.PUBLISH_URL || 'https://pengip.com/api/publish-article';
+
+if (!YUNWU_KEY) throw new Error('YUNWU_KEY is required');
+if (!PUBLISH_TOKEN) throw new Error('PUBLISH_TOKEN is required');
 
 // ─── Topic pool ───────────────────────────────────────────────────────────────
 // Balanced mix: how-to, best-of, case study, trend, FAQ
