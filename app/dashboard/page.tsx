@@ -54,11 +54,31 @@ export default function DashboardPage() {
   const [rechargeCode, setRechargeCode] = useState('');
   const [recharging, setRecharging] = useState(false);
 
+  // 条款确认弹窗（版本号变更时强制重新确认）
+  const TERMS_VERSION = 'v2';
+  const [showTerms, setShowTerms] = useState(false);
+  const [termsScrolled, setTermsScrolled] = useState(false);
+  const [termsChecked, setTermsChecked] = useState(false);
+
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login?redirect=/dashboard');
     }
   }, [user, loading, router]);
+
+  useEffect(() => {
+    if (user && typeof window !== 'undefined') {
+      const accepted = localStorage.getItem('pengip_terms_accepted');
+      if (accepted !== TERMS_VERSION) {
+        setShowTerms(true);
+      }
+    }
+  }, [user]);
+
+  const handleAcceptTerms = () => {
+    localStorage.setItem('pengip_terms_accepted', TERMS_VERSION);
+    setShowTerms(false);
+  };
 
   useEffect(() => {
     if (user) {
@@ -239,6 +259,83 @@ export default function DashboardPage() {
 
   return (
     <div className={styles.dashboardPage}>
+
+      {/* ── 条款确认弹窗（全局强制，所有用户必须同意） ── */}
+      {showTerms && (
+        <div className={styles.termsOverlay}>
+          <div className={styles.termsModal}>
+            <h2 className={styles.termsTitle}>⚠️ 用户使用协议与免责声明</h2>
+            <p className={styles.termsSubtitle}>请仔细阅读以下条款，滚动至底部后方可同意</p>
+
+            <div
+              className={styles.termsBody}
+              onScroll={(e) => {
+                const el = e.currentTarget;
+                if (el.scrollHeight - el.scrollTop - el.clientHeight < 30) setTermsScrolled(true);
+              }}
+            >
+              <h3>一、平台性质与内容声明</h3>
+              <p>PengIP 平台（以下简称"本平台"）提供的所有工具均为<strong>人工智能辅助创作工具</strong>，所有生成内容（包括图像、视频、文字）均为 AI 模拟输出，<strong>不具备任何医疗、法律、专业诊断效力</strong>，不构成任何形式的承诺或保证。</p>
+
+              <h3>二、医疗相关工具专项限制（PreVSim / HealVision）</h3>
+              <p>依据《广告法》《医疗广告管理办法》《医疗器械监督管理条例》，使用本平台医疗相关工具时，用户明确知悉并承诺：</p>
+              <ul>
+                <li><strong>严禁</strong>将 AI 生成图像用于医疗机构任何形式的对外宣传，包括但不限于官网、公众号、短视频、印刷品</li>
+                <li><strong>严禁</strong>将模拟图像作为"真实手术案例"或"术前术后对比"向患者或公众展示</li>
+                <li><strong>严禁</strong>以 AI 生成内容诱导患者做出任何医疗决策</li>
+                <li><strong>严禁</strong>用于任何形式的商业广告、推广或营销活动</li>
+                <li>AI 生成结果仅可用于医患沟通参考，使用前须由执业医师向患者说明该图像为 AI 模拟效果</li>
+              </ul>
+              <p>违反以上限制，可能触犯《广告法》第 58 条等条款，面临<strong>吊销执照、最高 100 万元以上罚款及刑事追责</strong>，本平台不承担任何连带责任。</p>
+
+              <h3>三、肖像权与隐私（StarFace / MotionX / 医患合影）</h3>
+              <p>依据《中华人民共和国民法典》第四编人格权相关条款及《个人信息保护法》：</p>
+              <ul>
+                <li>上传他人照片前，必须取得该人的<strong>明确书面授权</strong></li>
+                <li><strong>严禁</strong>上传未成年人面部照片</li>
+                <li><strong>严禁</strong>利用生成内容冒充他人、实施欺诈、诽谤或性骚扰</li>
+                <li><strong>严禁</strong>生成、传播涉及真实人物的虚假视频/图像用于误导公众</li>
+                <li>生成的包含他人面孔的内容，未经本人授权<strong>不得对外发布或传播</strong></li>
+              </ul>
+
+              <h3>四、AI 生成内容合规义务</h3>
+              <p>依据《生成式人工智能服务管理暂行办法》（2023年）：</p>
+              <ul>
+                <li>用户须确保输入内容（提示词、上传图片）不含违法、有害信息</li>
+                <li>对外传播 AI 生成内容时，<strong>必须显著标注"AI生成"字样</strong></li>
+                <li><strong>严禁</strong>使用 AI 生成内容传播谣言、虚假信息或从事违法活动</li>
+              </ul>
+
+              <h3>五、责任限制</h3>
+              <p>本平台仅提供技术工具服务，对用户使用生成内容的行为不承担监督义务，但保留配合执法机关调查的权利。<strong>因用户违规使用产生的一切法律责任，由用户本人承担，本平台不承担任何连带责任。</strong></p>
+              <p>本平台保留随时修改本协议的权利，修改后将要求用户重新确认。</p>
+
+              <p className={styles.termsVersion}>协议版本：{TERMS_VERSION} · 最后更新：2025年3月</p>
+            </div>
+
+            <div className={styles.termsFooter}>
+              <label className={styles.termsCheck}>
+                <input
+                  type="checkbox"
+                  checked={termsChecked}
+                  onChange={e => setTermsChecked(e.target.checked)}
+                  disabled={!termsScrolled}
+                />
+                <span>我已完整阅读上述条款，理解并同意遵守全部规定</span>
+              </label>
+              {!termsScrolled && <p className={styles.termsHint}>↓ 请滚动阅读全部条款</p>}
+              <button
+                className={styles.termsAcceptBtn}
+                disabled={!termsChecked || !termsScrolled}
+                onClick={handleAcceptTerms}
+              >
+                同意条款并进入
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 顶部导航 */}
       <header className={styles.header}>
         <Link href="/" className={styles.backBtn}>
