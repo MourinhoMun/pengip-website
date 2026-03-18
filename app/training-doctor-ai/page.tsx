@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import styles from './doctor-ai.module.scss';
+import { DOCTOR_AI_BRIEF_TEXT } from './brief';
 
 export const metadata: Metadata = {
   title: '医生AI能力训练营｜带着问题来，带着产品走｜鹏哥',
@@ -55,7 +56,17 @@ export default function DoctorAITrainingPage() {
 
       <section className={styles.section}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>你会遇到的典型问题（也是我们最常做的）</h2>
+          <h2 className={styles.sectionTitle}>简约版（500-600字）</h2>
+          <p className={styles.sectionSubtitle}>给医生/科室快速扫一眼用的版本。</p>
+          <div className={styles.briefBox}>
+            <pre className={styles.briefPre}>{DOCTOR_AI_BRIEF_TEXT}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.container}>
+          <h2 className={styles.sectionTitle}>详细版：你会遇到的典型问题（也是我们最常做的）</h2>
           <p className={styles.sectionSubtitle}>
             不是“听课”，是“解决问题”。把你的问题拆到足够具体，我们就能把它做成工具。
           </p>

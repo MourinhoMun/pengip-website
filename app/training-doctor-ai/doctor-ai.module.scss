@@ -175,6 +175,25 @@
   line-height: 1.7;
 }
 
+.briefBox {
+  margin-top: 14px;
+  border-radius: calc(var(--doctor-ai-radius) + 6px);
+  border: 1px solid rgba(11, 18, 32, 0.10);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 22px 55px rgba(2, 6, 23, 0.08);
+  overflow: hidden;
+}
+
+.briefPre {
+  margin: 0;
+  padding: 18px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: rgba(11, 18, 32, 0.86);
+  font-size: 14px;
+  line-height: 1.85;
+}
+
 .problemGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
