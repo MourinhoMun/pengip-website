@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import styles from './doctor-ai.module.scss';
-import { DOCTOR_AI_BRIEF_TEXT } from './brief';
 
 export const metadata: Metadata = {
   title: '医生AI能力训练营｜带着问题来，带着产品走｜鹏哥',
@@ -56,10 +55,11 @@ export default function DoctorAITrainingPage() {
 
       <section className={styles.section}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>简约版（500-600字）</h2>
-          <p className={styles.sectionSubtitle}>给医生/科室快速扫一眼用的版本。</p>
-          <div className={styles.briefBox}>
-            <pre className={styles.briefPre}>{DOCTOR_AI_BRIEF_TEXT}</pre>
+          <h2 className={styles.sectionTitle}>快速版本</h2>
+          <p className={styles.sectionSubtitle}>如果你只想先看500-600字的简约版，点这里。</p>
+          <div className={styles.briefCta}>
+            <Link className={styles.briefBtn} href="/training-doctor-ai-brief">查看简约版（500-600字） →</Link>
+            <div className={styles.briefNote}>简约版适合转发给同事/科室负责人快速决策。</div>
           </div>
         </div>
       </section>

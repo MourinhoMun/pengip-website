@@ -175,23 +175,33 @@
   line-height: 1.7;
 }
 
-.briefBox {
+.briefCta {
   margin-top: 14px;
   border-radius: calc(var(--doctor-ai-radius) + 6px);
   border: 1px solid rgba(11, 18, 32, 0.10);
   background: rgba(255, 255, 255, 0.72);
   box-shadow: 0 22px 55px rgba(2, 6, 23, 0.08);
-  overflow: hidden;
+  padding: 16px;
 }
 
-.briefPre {
-  margin: 0;
-  padding: 18px;
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: rgba(11, 18, 32, 0.86);
-  font-size: 14px;
-  line-height: 1.85;
+.briefBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--doctor-ai-accent) 0%, #0ea5a4 55%, var(--doctor-ai-accent3) 120%);
+  color: white;
+  font-weight: 900;
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  text-decoration: none;
+}
+
+.briefNote {
+  margin-top: 10px;
+  color: rgba(11, 18, 32, 0.62);
+  font-size: 13px;
+  line-height: 1.7;
 }
 
 .problemGrid {
