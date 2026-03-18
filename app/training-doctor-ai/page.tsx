@@ -16,8 +16,11 @@ export default function DoctorAITrainingPage() {
           <div className={styles.badge}>医生专属 · 实战</div>
           <h1 className={styles.title}>医生AI能力训练营</h1>
           <p className={styles.subtitle}>
-            带着问题来，带着产品走。只要你有一个真实场景的问题，我们用2天或3天，
-            一定帮你把解决方案做成可用的工具/流程，回去就能用。
+            带着问题来，带着产品走。我们以“交付”为目标：在满足基本前提（素材/权限/时间投入）的情况下，
+            2天或3天内至少交付1个可运行原型或可复用流程，并给到可继续迭代的模板与SOP。
+          </p>
+          <p className={styles.subtleNote}>
+            如果遇到客观限制导致无法当场上线，我们也会交付：需求文档 + 原型/流程图 + 模板库 + 下一步迭代清单（兜底交付）。
           </p>
 
           <div className={styles.heroGrid}>
@@ -45,7 +48,7 @@ export default function DoctorAITrainingPage() {
           </div>
 
           <p className={styles.heroNote}>
-            适合：临床一线医生 / 科研型医生 / 科室骨干 / 研究生与住培医生（需要导师同意）。
+            适合：临床一线医生 / 科研型医生 / 科室骨干 / 研究生与住培医生。
           </p>
         </div>
       </header>
@@ -123,7 +126,7 @@ export default function DoctorAITrainingPage() {
 
       <section className={styles.sectionAlt}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>我们的承诺：带着产品走</h2>
+          <h2 className={styles.sectionTitle}>我们的承诺：带着产品走（强承诺 + 边界 + 兜底）</h2>
           <div className={styles.promiseGrid}>
             {[
               {
@@ -151,6 +154,15 @@ export default function DoctorAITrainingPage() {
           </div>
 
           <div className={styles.highlightBox}>
+            <div className={styles.highlightTitle}>“可运行/可用”的定义（验收标准）</div>
+            <p className={styles.highlightText}>
+              1) 有明确输入与输出：例如输入“患者随访要点 + 风险提示”，输出“可直接发给患者的宣教卡 + 医生复核清单”。
+              2) 有使用说明：谁来用、怎么用、注意什么、哪些内容必须人工复核。
+              3) 能在约定环境里复现：现场演示跑通，并交付录屏/交付包（链接/代码/模板/流程图）便于你回院复用。
+            </p>
+          </div>
+
+          <div className={styles.highlightBox}>
             <div className={styles.highlightTitle}>你带来一个场景问题，我们把它做成产品</div>
             <p className={styles.highlightText}>
               “场景问题”不是泛泛的“我想用AI”。它来自真实工作：门诊沟通、随访、病例整理、科研写作、
@@ -162,34 +174,47 @@ export default function DoctorAITrainingPage() {
 
       <section className={styles.section}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>训练营结构：2天版 / 3天版（都以交付为中心）</h2>
-          <div className={styles.agendaTabs}>
-            <div className={styles.agendaColumn}>
-              <div className={styles.agendaHeader}>2天共创版（高密度）</div>
+          <h2 className={styles.sectionTitle}>训练营结构：2天版 / 3天版（清晰分开，按需选择）</h2>
+          <p className={styles.sectionSubtitle}>
+            2天：适合问题已经足够明确、目标是“交付冲刺”。3天：适合问题还不够清晰/需要补底层能力与评测方法。
+          </p>
+          <details className={styles.agendaDetails} open>
+            <summary className={styles.agendaSummary}>
+              <span>2天版（交付冲刺）</span>
+              <span className={styles.agendaHint}>适合：问题明确、希望快速做出能用的原型/流程</span>
+            </summary>
+            <div className={styles.agendaSingle}>
+              <div className={styles.agendaHeader}>2天 · 交付冲刺</div>
               <div className={styles.agendaBody}>
                 <div className={styles.agendaDay}>
-                  <div className={styles.agendaDayTitle}>Day 1 · 定义问题 + 设计方案</div>
+                  <div className={styles.agendaDayTitle}>Day 1 · 定义问题 + 原型搭建</div>
                   <ul>
                     <li>问题澄清：把“想要”变成可交付需求（输入/输出/约束/验收标准）</li>
-                    <li>医学场景提示词工程：可控、可复用、可迭代</li>
-                    <li>数据准备：你的素材如何脱敏、如何结构化（表格/字段/标签）</li>
-                    <li>原型搭建：用AI快速做出第一版工具（能跑起来）</li>
+                    <li>提示词与工作流：可控、可复用、可迭代（适合医学场景）</li>
+                    <li>素材准备：脱敏、结构化（表格/字段/标签/输出格式）</li>
+                    <li>原型搭建：做出第一版可跑的工具/流程（先跑通，再优化）</li>
                   </ul>
                 </div>
                 <div className={styles.agendaDay}>
-                  <div className={styles.agendaDayTitle}>Day 2 · 迭代 + 上线 + 交付</div>
+                  <div className={styles.agendaDayTitle}>Day 2 · 验证评测 + 上线交付</div>
                   <ul>
-                    <li>验证与评测：用真实病例/真实文献验证，找出失败模式</li>
-                    <li>流程化：把关键步骤固化成SOP（谁做、何时做、做什么）</li>
+                    <li>用真实样本验证：记录失败模式，形成复核点与风控清单</li>
+                    <li>流程固化：把关键步骤写成SOP（谁做、何时做、做什么）</li>
                     <li>产品化：交互、权限、留痕、版本管理与使用说明</li>
-                    <li>结营交付：可运行工具 + 使用手册 + 迭代清单</li>
+                    <li>结营交付：可运行原型/流程 + 录屏 + 使用手册 + 迭代清单</li>
                   </ul>
                 </div>
               </div>
             </div>
+          </details>
 
-            <div className={styles.agendaColumn}>
-              <div className={styles.agendaHeader}>3天深度版（更稳、更完整）</div>
+          <details className={styles.agendaDetails}>
+            <summary className={styles.agendaSummary}>
+              <span>3天版（打地基 + 交付）</span>
+              <span className={styles.agendaHint}>适合：问题不够清晰/需要补底层能力与评测方法</span>
+            </summary>
+            <div className={styles.agendaSingle}>
+              <div className={styles.agendaHeader}>3天 · 更稳更完整</div>
               <div className={styles.agendaBody}>
                 <div className={styles.agendaDay}>
                   <div className={styles.agendaDayTitle}>Day 1 · 能力地基</div>
@@ -200,7 +225,7 @@ export default function DoctorAITrainingPage() {
                   </ul>
                 </div>
                 <div className={styles.agendaDay}>
-                  <div className={styles.agendaDayTitle}>Day 2 · 产品共创</div>
+                  <div className={styles.agendaDayTitle}>Day 2 · 原型共创</div>
                   <ul>
                     <li>把你的场景问题落到“可交付需求”</li>
                     <li>原型开发：网页工具 / 表单系统 / 文档自动化 / 小型Agent</li>
@@ -208,7 +233,7 @@ export default function DoctorAITrainingPage() {
                   </ul>
                 </div>
                 <div className={styles.agendaDay}>
-                  <div className={styles.agendaDayTitle}>Day 3 · 上线与复制</div>
+                  <div className={styles.agendaDayTitle}>Day 3 · 质量评测 + 部署复制</div>
                   <ul>
                     <li>质量评测：错误类型、风险点、如何规避</li>
                     <li>部署与交付：从“能用”到“能交接”</li>
@@ -217,7 +242,7 @@ export default function DoctorAITrainingPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </details>
 
           <div className={styles.deliverables}>
             <h3 className={styles.deliverablesTitle}>结营交付清单</h3>
@@ -351,9 +376,9 @@ export default function DoctorAITrainingPage() {
 
       <section className={styles.section}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>合作医院（部分）</h2>
+          <h2 className={styles.sectionTitle}>交流/授课/共创过的部分单位（节选）</h2>
           <p className={styles.sectionSubtitle}>
-            以下为部分合作医院/交流单位展示（持续更新）。
+            以下为部分单位展示（持续更新）。展示仅代表交流记录，不代表医院官方背书或商业合作。
           </p>
 
           <div className={styles.partnerWrap}>
@@ -380,10 +405,22 @@ export default function DoctorAITrainingPage() {
             <div className={styles.ctaLeft}>
               <h2 className={styles.ctaTitle}>准备好把你的问题做成工具了吗？</h2>
               <p className={styles.ctaSubtitle}>
-                报名方式：添加微信 `peng_ip`，备注“医生AI训练营”，说明你的科室/方向与要解决的场景问题。
+                报名方式：添加微信 `peng_ip`，备注“医生AI训练营”，按下面模板发我（复制粘贴即可）。
               </p>
+
+              <div className={styles.copyBox}>
+                <div className={styles.copyTitle}>咨询模板（建议直接复制）</div>
+                <pre className={styles.copyPre}>{`备注：医生AI训练营
+科室/方向：___
+城市/医院：___
+我想解决的场景问题（越具体越好）：___
+我能提供的素材（可脱敏）：___
+想做2天还是3天：___`}</pre>
+              </div>
+
               <p className={styles.ctaSub2}>
                 我们会在开营前把问题梳理成需求清单，确保现场两天/三天真的做出可用成果。
+                如为住培/研究生，建议提前与导师/科室沟通时间安排；无需提供纸质证明，确保能全程参与即可。
               </p>
               <div className={styles.ctaActions}>
                 <a className={styles.ctaBtn} href="https://pengip.com#contact">立即咨询</a>

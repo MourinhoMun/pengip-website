@@ -61,7 +61,15 @@
   color: var(--doctor-ai-muted);
   font-size: 18px;
   line-height: 1.75;
+  margin: 0 0 14px;
+}
+
+.subtleNote {
+  max-width: 920px;
   margin: 0 0 22px;
+  color: rgba(11, 18, 32, 0.62);
+  font-size: 13px;
+  line-height: 1.7;
 }
 
 .heroGrid {
@@ -236,18 +244,34 @@
   line-height: 1.75;
 }
 
-.agendaTabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-top: 18px;
+.agendaDetails {
+  border: 1px solid var(--doctor-ai-line);
+  border-radius: calc(var(--doctor-ai-radius) + 6px);
+  background: rgba(255, 255, 255, 0.74);
+  overflow: hidden;
+  margin-top: 14px;
 }
 
-.agendaColumn {
-  border: 1px solid var(--doctor-ai-line);
-  border-radius: calc(var(--doctor-ai-radius) + 2px);
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.78);
+.agendaSummary {
+  cursor: pointer;
+  padding: 14px 16px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-weight: 950;
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.12) 0%, rgba(29, 78, 216, 0.06) 70%, rgba(249, 115, 22, 0.10) 120%);
+}
+
+.agendaHint {
+  font-weight: 800;
+  color: rgba(11, 18, 32, 0.62);
+  font-size: 12px;
+}
+
+.agendaSingle {
+  border-top: 1px solid rgba(11, 18, 32, 0.08);
 }
 
 .agendaHeader {
@@ -255,6 +279,31 @@
   font-weight: 950;
   color: white;
   background: linear-gradient(135deg, var(--doctor-ai-accent) 0%, #0ea5a4 60%, var(--doctor-ai-accent3) 120%);
+}
+
+.copyBox {
+  margin-top: 12px;
+  border-radius: calc(var(--doctor-ai-radius) + 2px);
+  border: 1px solid rgba(11, 18, 32, 0.10);
+  background: rgba(255, 255, 255, 0.70);
+  padding: 14px;
+}
+
+.copyTitle {
+  font-weight: 950;
+  margin-bottom: 10px;
+}
+
+.copyPre {
+  margin: 0;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px dashed rgba(11, 18, 32, 0.24);
+  background: rgba(248, 250, 252, 0.80);
+  color: rgba(11, 18, 32, 0.88);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow: auto;
 }
 
 .agendaBody {
