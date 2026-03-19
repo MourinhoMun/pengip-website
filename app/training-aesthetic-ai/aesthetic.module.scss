@@ -171,6 +171,148 @@
   gap: 14px;
 }
 
+.profileRow {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 14px;
+}
+
+.profileCard {
+  background: radial-gradient(900px 500px at 0% 0%, rgba(219, 39, 119, 0.12), transparent 60%),
+    radial-gradient(900px 500px at 100% 100%, rgba(15, 118, 110, 0.10), transparent 60%),
+    rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(11, 18, 32, 0.10);
+  border-radius: calc(var(--a-radius) + 6px);
+  padding: 20px;
+  box-shadow: 0 26px 70px rgba(2, 6, 23, 0.10);
+}
+
+.profileKicker {
+  font-weight: 950;
+  color: #9d174d;
+}
+
+.profileTitle {
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: -0.01em;
+  margin: 8px 0 10px;
+}
+
+.profileText {
+  color: rgba(11, 18, 32, 0.78);
+  line-height: 1.9;
+  font-size: 14px;
+}
+
+.bullets {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  color: rgba(11, 18, 32, 0.78);
+  line-height: 1.85;
+}
+
+.workGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.workCard {
+  position: relative;
+  overflow: hidden;
+  border-radius: calc(var(--a-radius) + 6px);
+  border: 1px solid rgba(11, 18, 32, 0.10);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 22px 56px rgba(2, 6, 23, 0.08);
+  padding: 18px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.workCard::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: radial-gradient(700px 320px at 10% 10%, rgba(219, 39, 119, 0.18), transparent 55%),
+    radial-gradient(700px 320px at 90% 90%, rgba(15, 118, 110, 0.16), transparent 55%);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.workCard:hover::before {
+  opacity: 1;
+}
+
+.workTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 950;
+  color: rgba(11, 18, 32, 0.78);
+}
+
+.workTitle {
+  margin: 10px 0 6px;
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: -0.01em;
+}
+
+.workDesc {
+  margin: 0;
+  color: rgba(11, 18, 32, 0.72);
+  line-height: 1.75;
+}
+
+.workMeta {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(11, 18, 32, 0.10);
+  background: rgba(255, 255, 255, 0.70);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.pillPink {
+  border-color: rgba(219, 39, 119, 0.22);
+  background: rgba(219, 39, 119, 0.10);
+  color: #9d174d;
+}
+
+.pillTeal {
+  border-color: rgba(15, 118, 110, 0.22);
+  background: rgba(15, 118, 110, 0.10);
+  color: #0f766e;
+}
+
+.pillOrange {
+  border-color: rgba(249, 115, 22, 0.24);
+  background: rgba(249, 115, 22, 0.10);
+  color: #c2410c;
+}
+
+@media (max-width: 980px) {
+  .profileRow {
+    grid-template-columns: 1fr;
+  }
+
+  .workGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .card {
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(11, 18, 32, 0.10);

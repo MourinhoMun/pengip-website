@@ -89,7 +89,40 @@ export default function AestheticAITrainingPage() {
 
       <section className={styles.sectionAlt}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>交付与验收（什么叫“可运行/可用”）</h2>
+          <h2 className={styles.sectionTitle}>讲师介绍：鹏哥（医生流量合伙人）</h2>
+          <p className={styles.sectionSubtitle}>不讲“AI 概念”，只讲“能拿去赚钱的落地系统”。</p>
+
+          <div className={styles.profileRow}>
+            <div className={styles.profileCard}>
+              <div className={styles.profileKicker}>你来是为了增长，我来是为了让你增长得更快、更稳、更可复制</div>
+              <div className={styles.profileTitle}>10年医疗行业深耕，从医药销售到AI创业，再到医生IP流量运营</div>
+              <div className={styles.profileText}>
+                我做过销售、做过产品、做过增长，也踩过坑。
+                这次训练营的目标很明确：把“医美获客、内容生产、咨询转化、复购转介绍”这些关键链路，
+                用 AI 做成可交付、可复用、可复制的 SOP 和工具。
+              </div>
+              <ul className={styles.bullets}>
+                <li>不是教你“写提示词”，而是把你的真实场景做成一套跑得动的系统</li>
+                <li>不是交付 PPT，而是交付：模板库 + SOP + 复盘方法 + 风控边界</li>
+                <li>目标是：团队能用、新人能学、门店能复制、数据能复盘</li>
+              </ul>
+            </div>
+
+            <div className={styles.profileCard}>
+              <div className={styles.profileKicker}>你会看到的作品（本站 + 脸诀美学）</div>
+              <div className={styles.profileTitle}>我做的不只是培训，我还做产品</div>
+              <div className={styles.profileText}>
+                你可以先看我已经上线跑通的工具与项目：一部分在 pengip.com，另一部分在脸诀美学（lianjue.net）。
+                训练营里我们会用同样的方法，把你的“业务问题”变成“可用的工具/流程”。
+              </div>
+              <div className={styles.heroActions} style={{ marginTop: 12 }}>
+                <a className={styles.primaryBtn} href="#works">先看作品</a>
+                <a className={styles.secondaryBtn} href="#contact">直接咨询报名</a>
+              </div>
+            </div>
+          </div>
+
+          <h2 className={styles.sectionTitle} style={{ marginTop: 26 }}>交付与验收（什么叫“可运行/可用”）</h2>
           <div className={styles.kpiGrid}>
             {[
               { k: '输入/输出清晰', v: '明确输入与输出格式，稳定产出可用内容/话术/任务清单/表格。' },
@@ -106,6 +139,85 @@ export default function AestheticAITrainingPage() {
           <div className={styles.noteBox}>
             承诺“强但有边界”：在满足基本前提（素材/权限/时间投入）的情况下，至少交付1个可跑原型或可复用流程；
             如遇客观限制无法当场上线，也会兜底交付：需求文档 + 原型/流程图 + 模板库 + 下一步清单。
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section} id="works">
+        <div className={styles.container}>
+          <h2 className={styles.sectionTitle}>我的作品（可点击体验）</h2>
+          <p className={styles.sectionSubtitle}>这些不是“展示”，是线上在跑的产品与工具。你看完会更清楚：我们在训练营里交付的到底是什么。</p>
+
+          <div className={styles.workGrid}>
+            <a className={styles.workCard} href="https://www.lianjue.net" target="_blank" rel="noopener noreferrer">
+              <div className={styles.workTag}>外部作品 · 脸诀美学</div>
+              <div className={styles.workTitle}>脸诀美学（lianjue.net）</div>
+              <p className={styles.workDesc}>高端 3D 数字化面部美学分析系统，用“看脸”的方式把审美与方案沟通结构化。</p>
+              <div className={styles.workMeta}>
+                <span className={`${styles.pill} ${styles.pillTeal}`}>3D</span>
+                <span className={`${styles.pill} ${styles.pillTeal}`}>数字化面部分析</span>
+                <span className={`${styles.pill} ${styles.pillTeal}`}>方案沟通</span>
+              </div>
+            </a>
+
+            <a className={styles.workCard} href="https://pengip.com/xhs-doctor" target="_blank" rel="noopener noreferrer">
+              <div className={styles.workTag}>本站作品 · 工具</div>
+              <div className={styles.workTitle}>医生海报科普图文生成器</div>
+              <p className={styles.workDesc}>一键生成可直接发布的小红书科普图文，支持对标笔记与多版式生成。</p>
+              <div className={styles.workMeta}>
+                <span className={`${styles.pill} ${styles.pillPink}`}>内容增长</span>
+                <span className={`${styles.pill} ${styles.pillPink}`}>图文海报</span>
+                <span className={`${styles.pill} ${styles.pillPink}`}>小红书</span>
+              </div>
+            </a>
+
+            <a className={styles.workCard} href="https://pengip.com/prevsim/" target="_blank" rel="noopener noreferrer">
+              <div className={styles.workTag}>本站作品 · 工具</div>
+              <div className={styles.workTitle}>PreVSim 术前模拟助手</div>
+              <p className={styles.workDesc}>用于医患沟通的术前效果模拟与方案对比（强调预期管理，不用于虚假宣传）。</p>
+              <div className={styles.workMeta}>
+                <span className={`${styles.pill} ${styles.pillOrange}`}>沟通转化</span>
+                <span className={`${styles.pill} ${styles.pillOrange}`}>方案对比</span>
+                <span className={`${styles.pill} ${styles.pillOrange}`}>预期管理</span>
+              </div>
+            </a>
+
+            <a className={styles.workCard} href="https://pengip.com/healvision/" target="_blank" rel="noopener noreferrer">
+              <div className={styles.workTag}>本站作品 · 工具</div>
+              <div className={styles.workTitle}>healvision 康复历程可视化</div>
+              <p className={styles.workDesc}>生成分阶段康复历程说明与对比图，辅助医患沟通（禁止虚假宣传）。</p>
+              <div className={styles.workMeta}>
+                <span className={`${styles.pill} ${styles.pillOrange}`}>术后沟通</span>
+                <span className={`${styles.pill} ${styles.pillOrange}`}>阶段可视化</span>
+                <span className={`${styles.pill} ${styles.pillOrange}`}>风险边界</span>
+              </div>
+            </a>
+
+            <a className={styles.workCard} href="https://pengip.com/motionx" target="_blank" rel="noopener noreferrer">
+              <div className={styles.workTag}>本站作品 · 工具</div>
+              <div className={styles.workTitle}>MicroMotion 肖像动态化</div>
+              <p className={styles.workDesc}>把静态照片生成逼真微动作视频，适合短视频素材、动态封面与展示。</p>
+              <div className={styles.workMeta}>
+                <span className={`${styles.pill} ${styles.pillPink}`}>素材生产</span>
+                <span className={`${styles.pill} ${styles.pillPink}`}>视频</span>
+                <span className={`${styles.pill} ${styles.pillPink}`}>动态封面</span>
+              </div>
+            </a>
+
+            <a className={styles.workCard} href="https://pengip.com/wechat-writer" target="_blank" rel="noopener noreferrer">
+              <div className={styles.workTag}>本站作品 · 工具</div>
+              <div className={styles.workTitle}>公众号长文生成器</div>
+              <p className={styles.workDesc}>URL 仿写 / 文献解读 / 主题生成，快速产出可发布的公众号长文内容。</p>
+              <div className={styles.workMeta}>
+                <span className={`${styles.pill} ${styles.pillPink}`}>内容生产</span>
+                <span className={`${styles.pill} ${styles.pillPink}`}>公众号</span>
+                <span className={`${styles.pill} ${styles.pillPink}`}>长文</span>
+              </div>
+            </a>
+          </div>
+
+          <div className={styles.noteBox} style={{ marginTop: 16 }}>
+            说明：作品页外链默认新窗口打开。想把某个作品换成更重点的页面（比如脸诀内页/案例页），你给我链接我再替换。
           </div>
         </div>
       </section>
