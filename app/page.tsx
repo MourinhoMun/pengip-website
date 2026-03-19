@@ -17,6 +17,7 @@ export default async function Home() {
       status: true,
       url: true,
       tutorialUrl: true,
+      tutorialContent: true,
       isExternal: true,
     },
   });

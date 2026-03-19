@@ -23,7 +23,7 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
 
   const handleToolClick = async (toolUrl?: string, isExternal?: boolean) => {
     if (!user) { setShowLoginModal(true); return; }
-    
+
     if (isExternal && toolUrl) {
       try {
         const res = await fetch('/api/v1/user/token', { credentials: 'include' });
@@ -42,6 +42,16 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
     }
   };
 
+  const getTutorialLink = (tool: any) => {
+    if (tool.tutorialUrl) return tool.tutorialUrl;
+    if (tool.tutorialContent) {
+      const slugBase = (tool.nameEn || tool.title || '').toString();
+      const slug = encodeURIComponent(slugBase.replace(/\s+/g, '-'));
+      return `/tutorials/${slug}`;
+    }
+    return null;
+  };
+
   const displayTools = dbTools?.length ? dbTools.map((tool) => ({
     title: lang === 'en' ? (tool.nameEn || tool.name) : tool.name,
     description: lang === 'en' ? (tool.descriptionEn || tool.description) : tool.description,
@@ -49,6 +59,8 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
     icon: tool.icon,
     isComing: tool.status === 'coming',
     tutorialUrl: tool.tutorialUrl || null,
+    tutorialContent: tool.tutorialContent || null,
+    nameEn: tool.nameEn || null,
     url: tool.url || null,
     isExternal: tool.isExternal || false,
   })) : t.tools.items;
@@ -89,15 +101,42 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                {/* 积分标签 + 教程链接 */}
+                {/* 积分标签 + 教程链接（始终显示） */}
                 {!isComing && (
                   <div className={styles.topRight}>
-                    {tool.tutorialUrl && (
-                      <a href={tool.tutorialUrl} target="_blank" rel="noopener noreferrer" className={styles.tutorialIcon} title="查看教程" onClick={e => e.stopPropagation()}>
-                        <PlayCircle size={14} />
-                        <span>教程</span>
-                      </a>
-                    )}
+                    {(() => {
+                      const tutorialLink = getTutorialLink(tool);
+                      if (tutorialLink) {
+                        const isExternalTutorial = Boolean(tool.tutorialUrl);
+                        return (
+                          <a
+                            href={tutorialLink}
+                            target={isExternalTutorial ? '_blank' : undefined}
+                            rel={isExternalTutorial ? 'noopener noreferrer' : undefined}
+                            className={styles.tutorialIcon}
+                            title="查看教程"
+                            onClick={e => e.stopPropagation()}
+                          >
+                            <PlayCircle size={14} />
+                            <span>教程</span>
+                          </a>
+                        );
+                      }
+
+                      return (
+                        <span
+                          className={styles.tutorialIcon}
+                          title="暂无教程"
+                          onClick={e => e.stopPropagation()}
+                          aria-disabled="true"
+                          style={{ opacity: 0.45, cursor: 'not-allowed' }}
+                        >
+                          <PlayCircle size={14} />
+                          <span>教程</span>
+                        </span>
+                      );
+                    })()}
+
                     {tool.points > 0 && (
                       <div className={styles.pointsBadge}>
                         <span>{tool.points} {t.tools.points}</span>
@@ -143,17 +182,38 @@ export default function Tools({ tools: dbTools }: { tools?: any[] }) {
                       {user ? <ArrowRight size={14} /> : <Lock size={14} />}
                       {user ? t.tools.useTool : t.tools.loginToUse}
                     </button>
-                    {tool.tutorialUrl && (
-                      <a
-                        href={tool.tutorialUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.tutorialBtn}
-                      >
-                        <PlayCircle size={14} />
-                        {t.tools.howToUse}
-                      </a>
-                    )}
+                    {(() => {
+                      const tutorialLink = getTutorialLink(tool);
+                      if (!tutorialLink) {
+                        return (
+                          <button
+                            type="button"
+                            className={styles.tutorialBtn}
+                            disabled
+                            title="暂无教程"
+                            onClick={(e) => e.stopPropagation()}
+                            style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                          >
+                            <PlayCircle size={14} />
+                            {t.tools.howToUse}
+                          </button>
+                        );
+                      }
+
+                      const isExternalTutorial = Boolean(tool.tutorialUrl);
+                      return (
+                        <a
+                          href={tutorialLink}
+                          target={isExternalTutorial ? '_blank' : undefined}
+                          rel={isExternalTutorial ? 'noopener noreferrer' : undefined}
+                          className={styles.tutorialBtn}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <PlayCircle size={14} />
+                          {t.tools.howToUse}
+                        </a>
+                      );
+                    })()}
                   </div>
                 ) : (
                   <button className={styles.comingBtn} disabled>

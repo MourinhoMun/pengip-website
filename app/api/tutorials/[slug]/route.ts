@@ -8,6 +8,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     where: {
       OR: [
         { nameEn: slug },
+        { nameEn: slug.replace(/-/g, ' ') },
         { id: slug },
       ],
       visible: true,
