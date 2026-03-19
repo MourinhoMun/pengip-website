@@ -42,6 +42,7 @@ export default function UsersPage() {
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [sort, setSort] = useState<'points_desc' | 'points_asc' | 'created_desc'>('points_desc');
   const [adjustUserId, setAdjustUserId] = useState<string | null>(null);
   const [adjustAmount, setAdjustAmount] = useState('');
   // 激活码弹窗
@@ -58,12 +59,13 @@ export default function UsersPage() {
     fetchUsers(1);
   }, []);
 
-  const fetchUsers = async (page: number) => {
+  const fetchUsers = async (page: number, nextSort?: typeof sort) => {
+    const effectiveSort = nextSort ?? sort;
     setLoading(true);
     try {
-      const params = new URLSearchParams({ page: page.toString(), limit: '20' });
+      const params = new URLSearchParams({ page: page.toString(), limit: '20', sort: effectiveSort });
       if (search) params.append('search', search);
-      
+
       const res = await fetch(`/api/admin/users?${params}`);
       if (res.ok) {
         const data = await res.json();
@@ -80,6 +82,11 @@ export default function UsersPage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchUsers(1);
+  };
+
+  const handleSortChange = (nextSort: typeof sort) => {
+    setSort(nextSort);
+    fetchUsers(1, nextSort);
   };
 
   const handleAdjustPoints = async (userId: string, amount: number) => {
@@ -185,6 +192,17 @@ export default function UsersPage() {
                 <Search size={16} />
               </button>
             </form>
+            <select
+              value={sort}
+              onChange={(e) => handleSortChange(e.target.value as typeof sort)}
+              className={styles.input}
+              style={{ width: '220px' }}
+              title="排序"
+            >
+              <option value="points_desc">积分从高到低</option>
+              <option value="points_asc">积分从低到高</option>
+              <option value="created_desc">注册时间从新到旧</option>
+            </select>
             <button
               onClick={() => setShowCreateForm(true)}
               className={`${styles.btn} ${styles.btnPrimary}`}

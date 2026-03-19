@@ -27,6 +27,9 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const search = searchParams.get('search') || '';
 
+    // Default: sort users by remaining points (high -> low)
+    const sort = searchParams.get('sort') || 'points_desc';
+
     const where = search
       ? {
         OR: [
@@ -37,12 +40,19 @@ export async function GET(request: NextRequest) {
       }
       : {};
 
+    const orderBy =
+      sort === 'points_asc'
+        ? [{ points: 'asc' as const }, { createdAt: 'desc' as const }]
+        : sort === 'created_desc'
+          ? [{ createdAt: 'desc' as const }]
+          : [{ points: 'desc' as const }, { createdAt: 'desc' as const }];
+
     const [users, total] = await Promise.all([
       prisma.user.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         select: {
           id: true,
           email: true,
