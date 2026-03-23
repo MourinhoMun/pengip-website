@@ -34,12 +34,19 @@
 
 .badge {
   display: inline-flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 14px;
   border-radius: 999px;
   background: rgba(219, 39, 119, 0.10);
   border: 1px solid rgba(219, 39, 119, 0.18);
   color: #9d174d;
   font-weight: 950;
+}
+
+.badgeIcon {
+  width: 16px;
+  height: 16px;
 }
 
 .title {
@@ -106,6 +113,18 @@
   box-shadow: 0 18px 44px rgba(2, 6, 23, 0.06);
 }
 
+.heroIcon {
+  width: 18px;
+  height: 18px;
+  color: rgba(11, 18, 32, 0.62);
+  margin-bottom: 8px;
+}
+
+.heroIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
 .heroVal {
   font-size: 22px;
   font-weight: 950;
@@ -130,9 +149,19 @@
 }
 
 .sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
   font-size: 24px;
   letter-spacing: -0.01em;
   margin: 0 0 10px;
+}
+
+.titleIcon {
+  width: 18px;
+  height: 18px;
+  color: rgba(11, 18, 32, 0.62);
 }
 
 .sectionSubtitle {
@@ -169,6 +198,52 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
+}
+
+.scheduleGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.scheduleCard {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(11, 18, 32, 0.10);
+  border-radius: var(--a-radius);
+  padding: 16px;
+  box-shadow: 0 22px 50px rgba(2, 6, 23, 0.06);
+}
+
+.scheduleTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.scheduleTitle {
+  font-weight: 950;
+  letter-spacing: -0.01em;
+}
+
+.scheduleTag {
+  font-size: 11px;
+  font-weight: 950;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 118, 110, 0.22);
+  background: rgba(15, 118, 110, 0.10);
+  color: #0f766e;
+  white-space: nowrap;
+}
+
+.scheduleList {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--a-muted);
+  line-height: 1.75;
 }
 
 .profileRow {
@@ -311,6 +386,10 @@
   .workGrid {
     grid-template-columns: 1fr;
   }
+
+  .scheduleGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .card {
@@ -322,8 +401,18 @@
 }
 
 .cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 950;
   margin-bottom: 8px;
+}
+
+.cardIcon {
+  width: 18px;
+  height: 18px;
+  color: rgba(11, 18, 32, 0.62);
+  flex: 0 0 auto;
 }
 
 .list {

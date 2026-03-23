@@ -50,3 +50,7 @@ next-env.d.ts
 dev.db
 dev.db-shm
 dev.db-wal
+
+# local backups / snapshots
+*.bak*
+*.backup*

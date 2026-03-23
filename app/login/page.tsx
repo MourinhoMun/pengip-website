@@ -98,9 +98,8 @@ function LoginForm() {
     <div className={styles.authPage}>
       <div className={styles.authCard}>
         <div className={styles.authHeader}>
-          <Link href={brand.homeUrl} className={styles.logo}>{brand.name}</Link>
           <h1>登录</h1>
-          <p>欢迎回来，请登录您的账户</p>
+          <p>登录以继续使用工具</p>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.authForm}>

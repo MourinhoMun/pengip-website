@@ -31,6 +31,7 @@ export default function Navbar() {
 
   const navItems = [
     { label: t.nav.tools, href: anchor('tools') },
+    { label: '培训', href: '/training' },
     ...(!brand.isYimei ? [{ label: t.nav.about, href: '/about' }] : []),
     { label: t.nav.contact, href: anchor('contact') },
   ];

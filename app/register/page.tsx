@@ -117,9 +117,8 @@ function RegisterForm() {
     <div className={styles.authPage}>
       <div className={styles.authCard}>
         <div className={styles.authHeader}>
-          <Link href={brand.homeUrl} className={styles.logo}>{brand.name}</Link>
           <h1>注册</h1>
-          <p>创建账户，开启AI赋能之旅</p>
+          <p>创建账户以继续使用工具</p>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.authForm}>
