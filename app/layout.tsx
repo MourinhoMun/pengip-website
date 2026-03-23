@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "./i18n";
 import { AuthProvider } from "./contexts/AuthContext";
+import { headers } from "next/headers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,18 +15,38 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "鹏哥 - 医生流量合伙人 | 专注医生IP流量运营",
-  description: "10年医疗行业深耕，从医药销售到AI创业。专注医生IP流量运营，提供IP代运营、AI+流量培训、医生AI助理等服务。",
-  keywords: ["医生IP", "医疗流量", "AI医疗工具", "医生个人品牌", "IP运营", "医疗AI"],
-  authors: [{ name: "鹏哥" }],
-  openGraph: {
-    title: "鹏哥 - 医生流量合伙人",
-    description: "专注医生IP流量运营，10年医疗行业深耕",
-    type: "website",
-    locale: "zh_CN",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers();
+  const host = headersList.get("host") || "";
+  const isYimei = host.includes("yimeimeigong.com");
+
+  if (isYimei) {
+    return {
+      title: "医美美工 - AI医美内容创作平台",
+      description: "专为医美从业者打造的AI工具平台，提升内容创作效率，助力品牌增长。",
+      keywords: ["医美AI", "医美工具", "AI医美", "医美内容创作", "医美美工"],
+      openGraph: {
+        title: "医美美工 - AI医美内容创作平台",
+        description: "专为医美从业者打造的AI工具平台",
+        type: "website",
+        locale: "zh_CN",
+      },
+    };
+  }
+
+  return {
+    title: "鹏哥 - 医生流量合伙人 | 专注医生IP流量运营",
+    description: "10年医疗行业深耕，从医药销售到AI创业。专注医生IP流量运营，提供IP代运营、AI+流量培训、医生AI助理等服务。",
+    keywords: ["医生IP", "医疗流量", "AI医疗工具", "医生个人品牌", "IP运营", "医疗AI"],
+    authors: [{ name: "鹏哥" }],
+    openGraph: {
+      title: "鹏哥 - 医生流量合伙人",
+      description: "专注医生IP流量运营，10年医疗行业深耕",
+      type: "website",
+      locale: "zh_CN",
+    },
+  };
+}
 
 export default function RootLayout({
   children,

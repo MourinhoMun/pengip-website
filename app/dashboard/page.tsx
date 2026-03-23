@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../i18n';
-import { Coins, Gift, Copy, Check, ExternalLink, History, LogOut, ArrowLeft, Sparkles, Download, Key, Crown, X } from 'lucide-react';
+import { Coins, Gift, Copy, Check, ExternalLink, History, LogOut, ArrowLeft, Sparkles, Download, Key, Crown, X, BookOpen } from 'lucide-react';
 import styles from './dashboard.module.scss';
 
 interface Tool {
@@ -18,6 +18,8 @@ interface Tool {
   points: number;
   url: string | null;
   downloadUrl: string | null;
+  tutorialUrl: string | null;
+  tutorialContent: string | null;
   status: string;
 }
 
@@ -356,6 +358,17 @@ export default function DashboardPage() {
               return (
                 <div key={tool.id} className={`${styles.toolCard} ${isComing ? styles.coming : ''}`}>
                   <div className={styles.toolIcon}>{tool.icon || '🔧'}</div>
+                  {(tool.tutorialContent || tool.tutorialUrl) && (
+                    <Link
+                      href={`/tutorials/${tool.nameEn || tool.id}`}
+                      className={styles.tutorialLink}
+                      title="查看使用教程"
+                      target="_blank"
+                    >
+                      <BookOpen size={13} />
+                      教程
+                    </Link>
+                  )}
                   <div className={styles.toolInfo}>
                     <h3>{lang === 'en' && tool.nameEn ? tool.nameEn : tool.name}</h3>
                     <p>{lang === 'en' && tool.descriptionEn ? tool.descriptionEn : tool.description}</p>

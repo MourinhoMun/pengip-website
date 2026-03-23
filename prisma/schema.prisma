@@ -30,6 +30,7 @@ model User {
   // 关联
   pointTransactions PointTransaction[]
   toolUsages        ToolUsage[]
+  motionControlTasks MotionControlTask[]
   // 关联
 
 
@@ -51,6 +52,7 @@ model Tool {
   url           String?     // 工具跳转链接
   downloadUrl   String?     // 下载地址（百度网盘等）
   tutorialUrl   String?     // 教程视频链接
+  tutorialContent String?   // 教程图文（HTML，管理后台维护）
   status        String      @default("active") // active | inactive | coming
   sortOrder     Int         @default(0)
   visible       Boolean     @default(true)
@@ -62,6 +64,7 @@ model Tool {
   // 关联
   usages          ToolUsage[]
   activationCodes ActivationCode[]
+  motionControlTasks MotionControlTask[]
 
   @@index([status])
 }
@@ -123,4 +126,79 @@ model PointTransaction {
 
   @@index([userId])
   @@index([type])
+}
+
+// 动作复刻任务（第三方 Motion Control API）
+model MotionControlTask {
+  id                 String    @id @default(cuid())
+  userId             String
+  toolId             String?
+
+  externalTaskId     String    @unique // 我方生成，用于幂等/追踪
+  providerTaskId     String?   @unique // 第三方生成的 task_id
+
+  status             String
+  statusMsg          String?
+  requestId          String?
+
+  modelName          String
+  mode               String
+  characterOrientation String
+  keepOriginalSound  String
+  prompt             String?
+  watermarkEnabled   Boolean   @default(false)
+
+  imageUrl           String
+  videoUrl           String
+
+  resultUrl          String?
+  watermarkUrl       String?
+  durationSeconds    Float?
+  finalUnitDeduction String?
+
+  // 计费：10积分/秒（先预扣上限，成功后按实际时长结算，多退少补）
+  maxPoints          Int
+  finalPoints        Int?
+  refundedPoints     Int?
+  finalizedAt        DateTime?
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  // 关联
+  user               User      @relation(fields: [userId], references: [id])
+  tool               Tool?     @relation(fields: [toolId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([providerTaskId])
+}
+
+// 眼部恢复模板（内置A-E等）
+model EyeRecoveryTemplate {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g. A, B, C, D, E
+  name      String
+  enabled   Boolean  @default(true)
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  images EyeRecoveryTemplateImage[]
+}
+
+// 模板的眼周序列图（只上传眼周局部）
+model EyeRecoveryTemplateImage {
+  id         String   @id @default(cuid())
+  templateId String
+  day        Int      // -3/0/1/7/14/21/30/100 ...
+  imageUrl   String
+  width      Int?
+  height     Int?
+  mimeType   String?
+  createdAt  DateTime @default(now())
+
+  template EyeRecoveryTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([templateId, day])
 }

@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, nameEn, description, descriptionEn, icon, points, url, downloadUrl, tutorialUrl, status, sortOrder, apiUrl, apiKey } = body;
+    const { name, nameEn, description, descriptionEn, icon, points, url, downloadUrl, tutorialUrl, tutorialContent, status, sortOrder, apiUrl, apiKey } = body;
 
     if (!name || !description) {
       return NextResponse.json(
@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
         url: url || null,
         downloadUrl: downloadUrl || null,
         tutorialUrl: tutorialUrl || null,
+        tutorialContent: tutorialContent || null,
         status: status || 'active',
         sortOrder: sortOrder || 0,
         visible: body.visible !== undefined ? body.visible : true,

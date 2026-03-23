@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { RefreshCw } from 'lucide-react';
+import { useBrand } from '../hooks/useBrand';
 import styles from '../login/auth.module.scss';
 
 function RegisterForm() {
@@ -19,6 +20,7 @@ function RegisterForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const brand = useBrand();
 
   // 加载验证码
   const loadCaptcha = () => {
@@ -115,7 +117,7 @@ function RegisterForm() {
     <div className={styles.authPage}>
       <div className={styles.authCard}>
         <div className={styles.authHeader}>
-          <Link href="/" className={styles.logo}>鹏哥</Link>
+          <Link href={brand.homeUrl} className={styles.logo}>{brand.name}</Link>
           <h1>注册</h1>
           <p>创建账户，开启AI赋能之旅</p>
         </div>

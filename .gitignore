@@ -50,3 +50,7 @@ next-env.d.ts
 dev.db
 dev.db-shm
 dev.db-wal
+
+# local deploy helpers / test outputs
+/deploy.sh
+/test-results/

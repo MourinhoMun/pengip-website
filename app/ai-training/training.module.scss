@@ -1,0 +1,355 @@
+.page {
+  padding-top: 80px;
+  min-height: 100vh;
+}
+
+.hero {
+  text-align: center;
+  padding: 5rem 1.5rem 3rem;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+}
+
+.heroContent {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  margin-bottom: 1.25rem;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+  @media (max-width: 768px) { font-size: 1.875rem; }
+}
+
+.heroSubtitle {
+  font-size: 1.1rem;
+  opacity: 0.85;
+  margin-bottom: 2rem;
+}
+
+.heroMeta {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.metaItem {
+  text-align: center;
+  .metaVal { font-size: 1.75rem; font-weight: 800; }
+  .metaLabel { font-size: 0.8rem; opacity: 0.75; margin-top: 0.2rem; }
+}
+
+.heroBtn {
+  display: inline-block;
+  background: white;
+  color: #4f46e5;
+  font-weight: 700;
+  padding: 0.875rem 2.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); color: #4f46e5; }
+}
+
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: 3.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.sectionSubtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.75rem;
+}
+
+// ── 痛点 ──────────────────────────────────────────────────────────────────────
+.painGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.painCard {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+
+  &.bad { border-color: #fca5a5; background: #fff5f5; }
+  &.good { border-color: #86efac; background: #f0fdf4; }
+
+  h3 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  ul {
+    list-style: none;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    li::before { content: '· '; }
+  }
+}
+
+// ── 数据 ──────────────────────────────────────────────────────────────────────
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+
+.statCard {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  .statNum { font-size: 2rem; font-weight: 800; color: #6366f1; }
+  .statLabel { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; }
+}
+
+.testimonial {
+  background: #f5f3ff;
+  border-left: 4px solid #6366f1;
+  border-radius: 0 12px 12px 0;
+  padding: 1.25rem 1.5rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-style: italic;
+}
+
+// ── 日程 ──────────────────────────────────────────────────────────────────────
+.dayBlock {
+  margin-bottom: 1.5rem;
+}
+
+.dayTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #6366f1;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: #f5f3ff;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.scheduleList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.scheduleItem {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.875rem;
+
+  .scheduleTime {
+    color: #6366f1;
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 110px;
+  }
+
+  .scheduleContent { color: var(--text-secondary); }
+}
+
+// ── 收获 ──────────────────────────────────────────────────────────────────────
+.gainGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.gainCard {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+
+  h3 {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+  }
+
+  ul {
+    list-style: none;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    li::before { content: '✓ '; color: #6366f1; font-weight: 700; }
+  }
+}
+
+// ── 适合谁 ────────────────────────────────────────────────────────────────────
+.audienceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.audienceItem {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+
+  .audienceIcon { font-size: 1.5rem; flex-shrink: 0; }
+  .audienceTitle { font-weight: 700; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.2rem; }
+  .audienceDesc { font-size: 0.8rem; color: var(--text-secondary); }
+}
+
+// ── 导师 ──────────────────────────────────────────────────────────────────────
+.teacherCard {
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+
+  .teacherName { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem; }
+
+  ul {
+    list-style: none;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    li::before { content: '· '; color: #6366f1; }
+  }
+}
+
+.teacherTeam {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.teamItem {
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+// ── 费用 ──────────────────────────────────────────────────────────────────────
+.feeBox {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1rem;
+}
+
+.feeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+
+  &:last-child { border-bottom: none; }
+
+  .feeLabel { color: var(--text-secondary); }
+  .feeVal { font-weight: 600; color: var(--text-primary); }
+  .feePrice { font-size: 1.5rem; font-weight: 800; color: #6366f1; }
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+
+.infoItem {
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 0.875rem;
+  .infoLabel { color: var(--text-secondary); margin-bottom: 0.25rem; font-size: 0.8rem; }
+  .infoVal { font-weight: 600; color: var(--text-primary); }
+}
+
+// ── CTA ───────────────────────────────────────────────────────────────────────
+.ctaSection {
+  padding: 4rem 0 5rem;
+}
+
+.ctaBox {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  color: white;
+  text-align: center;
+}
+
+.ctaTitle { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+.ctaSubtitle { opacity: 0.85; margin-bottom: 2rem; font-size: 0.95rem; }
+
+.ctaBtn {
+  display: inline-block;
+  background: white;
+  color: #4f46e5;
+  font-weight: 700;
+  padding: 0.875rem 2.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); color: #4f46e5; }
+}
+
+.ctaNote { margin-top: 1rem; font-size: 0.85rem; opacity: 0.65; }

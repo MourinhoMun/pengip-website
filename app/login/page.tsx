@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useBrand } from '../hooks/useBrand';
 import styles from './auth.module.scss';
 
 function LoginForm() {
@@ -22,6 +23,7 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
+  const brand = useBrand();
 
   // 加载验证码
   const loadCaptcha = () => {
@@ -96,7 +98,7 @@ function LoginForm() {
     <div className={styles.authPage}>
       <div className={styles.authCard}>
         <div className={styles.authHeader}>
-          <Link href="/" className={styles.logo}>鹏哥</Link>
+          <Link href={brand.homeUrl} className={styles.logo}>{brand.name}</Link>
           <h1>登录</h1>
           <p>欢迎回来，请登录您的账户</p>
         </div>

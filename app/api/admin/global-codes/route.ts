@@ -33,17 +33,17 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const type = searchParams.get('type');
         const status = searchParams.get('status');
+        const search = searchParams.get('search') || '';
 
-        const where: any = {
-            toolId: null // 仅查询全局码
-        };
+        const where: any = { toolId: null };
         if (type) where.type = type;
         if (status) where.status = status;
+        if (search) where.code = { contains: search.toUpperCase() };
 
         const codes = await prisma.activationCode.findMany({
             where,
             orderBy: { createdAt: 'desc' },
-            take: 100
+            take: 200
         });
 
         return NextResponse.json({ codes });
@@ -60,8 +60,8 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { type, points, count = 1, note } = body;
 
-        if (!['annual', 'recharge'].includes(type)) {
-            return NextResponse.json({ error: 'Invalid type. Must be annual or recharge' }, { status: 400 });
+        if (!['annual', 'recharge', 'trial'].includes(type)) {
+            return NextResponse.json({ error: 'Invalid type. Must be annual, recharge or trial' }, { status: 400 });
         }
 
         if (type === 'recharge' && (typeof points !== 'number' || points < 0)) {

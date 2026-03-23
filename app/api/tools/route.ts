@@ -18,6 +18,7 @@ export async function GET() {
         url: true,
         downloadUrl: true,
         tutorialUrl: true,
+        tutorialContent: true,
         status: true,
       },
     });

@@ -347,6 +347,7 @@
   border-radius: 10px;
   transition: all var(--transition-fast);
   overflow: hidden;
+  position: relative;
 
   &:hover {
     border-color: var(--primary-light);
@@ -355,6 +356,25 @@
 
   &.coming {
     opacity: 0.6;
+  }
+}
+
+.tutorialLink {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  text-decoration: none;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  transition: all 0.15s;
+  &:hover {
+    color: var(--primary);
+    background: var(--bg-secondary);
   }
 }
 

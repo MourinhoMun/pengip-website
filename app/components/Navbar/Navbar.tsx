@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/app/i18n';
 import { useAuth } from '@/app/contexts/AuthContext';
+import { useBrand } from '@/app/hooks/useBrand';
 import styles from './Navbar.module.scss';
 
 export default function Navbar() {
@@ -15,6 +16,7 @@ export default function Navbar() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { t, toggleLanguage } = useLanguage();
   const { user, logout, loading } = useAuth();
+  const brand = useBrand();
   const pathname = usePathname();
   const isHome = pathname === '/';
   const anchor = (id: string) => isHome ? `#${id}` : `/#${id}`;
@@ -28,10 +30,8 @@ export default function Navbar() {
   }, []);
 
   const navItems = [
-    { label: t.nav.about, href: anchor('about') },
-    { label: t.nav.experience, href: anchor('experience') },
-    { label: t.nav.services, href: anchor('services') },
     { label: t.nav.tools, href: anchor('tools') },
+    ...(!brand.isYimei ? [{ label: t.nav.about, href: '/about' }] : []),
     { label: t.nav.contact, href: anchor('contact') },
   ];
   const pricingLabel = t.nav.pricing;
@@ -63,14 +63,23 @@ export default function Navbar() {
     >
       <div className={styles.container}>
         {/* Logo */}
-        <a href="#" className={styles.logo}>
-          <span className={styles.logoText}>{t.hero.name}</span>
+        <a href="/" className={styles.logo}>
+          <span className={styles.logoText}>{brand.name}</span>
         </a>
 
         {/* Desktop Navigation */}
         <div className={styles.desktopNav}>
           {navItems.map((item) => (
-            <a key={item.href} href={item.href} className={styles.navLink}>
+            <a
+              key={item.href}
+              href={item.href}
+              className={styles.navLink}
+              onClick={(e) => {
+                if (item.href.startsWith('#') || item.href.startsWith('/#')) return;
+                e.preventDefault();
+                window.location.href = item.href;
+              }}
+            >
               {item.label}
             </a>
           ))}

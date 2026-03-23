@@ -29,6 +29,24 @@ export async function POST(request: NextRequest) {
         }
 
         if (activationCode.status === 'used') {
+            // 年卡已用：允许重新登录
+            if (activationCode.type === 'annual' && activationCode.userId) {
+                const existingUser = await prisma.user.findUnique({ where: { id: activationCode.userId } });
+                if (existingUser) {
+                    const token = sign(
+                        { userId: existingUser.id, deviceId: existingUser.deviceId, role: existingUser.role },
+                        JWT_SECRET,
+                        { expiresIn: '365d' }
+                    );
+                    await prisma.user.update({ where: { id: existingUser.id }, data: { currentToken: token } });
+                    return NextResponse.json({
+                        success: true,
+                        token,
+                        user: { userId: existingUser.id, balance: existingUser.points },
+                        message: '已重新登录',
+                    });
+                }
+            }
             return NextResponse.json({ error: 'Activation code has reached maximum uses' }, { status: 400 });
         }
 
@@ -48,6 +66,7 @@ export async function POST(request: NextRequest) {
                 JWT_SECRET,
                 { expiresIn: '365d' }
             );
+            await prisma.user.update({ where: { id: user.id }, data: { currentToken: token } });
             return NextResponse.json({
                 success: true,
                 token,
@@ -174,6 +193,8 @@ export async function POST(request: NextRequest) {
             JWT_SECRET,
             { expiresIn: '365d' }
         );
+
+        await prisma.user.update({ where: { id: user.id }, data: { currentToken: token } });
 
         return NextResponse.json({
             success: true,

@@ -1,6 +1,6 @@
 export const revalidate = 60;
 import prisma from '@/app/lib/db';
-import { Navbar, Hero, Experience, Services, Tools, Footer } from './components';
+import { Navbar, Tools, Training, Footer } from './components';
 
 export default async function Home() {
   const tools = await prisma.tool.findMany({
@@ -25,9 +25,7 @@ export default async function Home() {
       <Navbar />
       <main>
         <Tools tools={tools} />
-        <Hero />
-        <Experience />
-        <Services />
+        <Training />
       </main>
       <Footer />
     </>
