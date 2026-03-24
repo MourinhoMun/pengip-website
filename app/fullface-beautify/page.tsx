@@ -81,6 +81,7 @@ export default function FullfaceBeautifyPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [resultDataUrl, setResultDataUrl] = useState<string | null>(null);
+  const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [cost, setCost] = useState<number | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
 
@@ -98,6 +99,7 @@ export default function FullfaceBeautifyPage() {
   const handleGenerate = async () => {
     setError(null);
     setResultDataUrl(null);
+    setResultUrl(null);
     setCost(null);
     setRemaining(null);
 
@@ -129,6 +131,7 @@ export default function FullfaceBeautifyPage() {
         throw new Error(data?.error || '生成失败');
       }
 
+      setResultUrl(data.imageUrl || null);
       setResultDataUrl(data.imageDataUrl || null);
       setCost(typeof data.cost === 'number' ? data.cost : null);
       setRemaining(typeof data.remaining_points === 'number' ? data.remaining_points : null);
@@ -140,9 +143,10 @@ export default function FullfaceBeautifyPage() {
   };
 
   const handleDownload = async () => {
-    if (!resultDataUrl) return;
+    const href = resultUrl || resultDataUrl;
+    if (!href) return;
     const a = document.createElement('a');
-    a.href = resultDataUrl;
+    a.href = href;
     a.download = `全脸变美_${new Date().toISOString().slice(0, 10)}.png`;
     document.body.appendChild(a);
     a.click();
@@ -152,6 +156,7 @@ export default function FullfaceBeautifyPage() {
   const handleReset = () => {
     setImageFile(null);
     setResultDataUrl(null);
+    setResultUrl(null);
     setError(null);
     setCost(null);
     setRemaining(null);
@@ -263,10 +268,10 @@ export default function FullfaceBeautifyPage() {
             <Download size={16} /> 生成结果
           </div>
 
-          {resultDataUrl ? (
+          {resultUrl || resultDataUrl ? (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className={styles.resultImg} src={resultDataUrl} alt="result" />
+              <img className={styles.resultImg} src={resultUrl || resultDataUrl || ''} alt="result" />
               <div className={styles.resultMeta}>
                 <span>消耗：{cost ?? '-'} 积分</span>
                 <span>剩余：{remaining ?? '-'} 积分</span>

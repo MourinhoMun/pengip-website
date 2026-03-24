@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
+import fs from 'fs/promises';
+import path from 'path';
 import prisma from '@/app/lib/db';
 import { getCurrentUser } from '@/app/lib/auth';
+import { getBaseUrl } from '@/app/lib/httpBaseUrl';
 
 export const runtime = 'nodejs';
 
@@ -96,6 +100,42 @@ function parseDataUrl(dataUrl: string): { mimeType: string; data: string } {
   const m = String(dataUrl || '').match(/^data:(.+);base64,(.+)$/);
   if (!m) throw new Error('INVALID_IMAGE');
   return { mimeType: m[1], data: m[2] };
+}
+
+function extFromMimeType(mimeType: string): string {
+  const mt = String(mimeType || '').toLowerCase();
+  if (mt === 'image/png') return 'png';
+  if (mt === 'image/jpeg' || mt === 'image/jpg') return 'jpg';
+  if (mt === 'image/webp') return 'webp';
+  return 'png';
+}
+
+async function saveGeneratedImageToPublic(req: NextRequest, dataUrl: string) {
+  // Save result to /public so user downloads via normal HTTP instead of huge base64 data URL.
+  const { mimeType, data } = parseDataUrl(dataUrl);
+  const buf = Buffer.from(data, 'base64');
+
+  const maxBytes = 12 * 1024 * 1024;
+  if (buf.length <= 0 || buf.length > maxBytes) {
+    throw new Error('IMAGE_TOO_LARGE');
+  }
+
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+  const ext = extFromMimeType(mimeType);
+  const fileName = `${crypto.randomUUID()}.${ext}`;
+
+  const relPath = `/generated/fullface-beautify/${dateStr}/${fileName}`;
+  const absDir = path.join(process.cwd(), 'public', 'generated', 'fullface-beautify', dateStr);
+  const absPath = path.join(absDir, fileName);
+
+  await fs.mkdir(absDir, { recursive: true });
+  await fs.writeFile(absPath, buf);
+
+  const baseUrl = getBaseUrl(req);
+  const imageUrl = baseUrl ? `${baseUrl}${relPath}` : relPath;
+
+  return { relPath, imageUrl, mimeType, bytes: buf.length };
 }
 
 function buildPrompt(selectedKeys: string[]): string {
@@ -257,9 +297,24 @@ export async function POST(req: NextRequest) {
     const out = extractImageDataUrlFromGemini(dataResp);
     const remaining = await prisma.user.findUnique({ where: { id: user.id }, select: { points: true } });
 
+    let imageUrl: string | null = null;
+    let imagePath: string | null = null;
+
+    if (String(out).startsWith('data:')) {
+      const saved = await saveGeneratedImageToPublic(req, out);
+      imageUrl = saved.imageUrl;
+      imagePath = saved.relPath;
+    } else if (String(out).startsWith('http://') || String(out).startsWith('https://')) {
+      // Provider gave us a URL; use it directly (still faster than base64 download).
+      imageUrl = String(out);
+    }
+
     return NextResponse.json({
       success: true,
-      imageDataUrl: out,
+      // Prefer URL for better UX; keep imageDataUrl for backward compatibility.
+      imageUrl,
+      imagePath,
+      imageDataUrl: imageUrl ? null : out,
       cost,
       remaining_points: remaining?.points ?? null,
     });
@@ -285,6 +340,10 @@ export async function POST(req: NextRequest) {
 
     if (msg === 'NO_IMAGE') {
       return NextResponse.json({ error: '生成成功但未返回图片，请重试' }, { status: 502 });
+    }
+
+    if (msg === 'IMAGE_TOO_LARGE') {
+      return NextResponse.json({ error: '生成图片过大，请切换 1K 或重试' }, { status: 502 });
     }
 
     return NextResponse.json({ error: msg.replace(/^PROVIDER_ERROR:/, '') }, { status: 500 });
