@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# runtime-generated assets (saved by API routes)
+/public/generated/
+
 # production
 /build
 

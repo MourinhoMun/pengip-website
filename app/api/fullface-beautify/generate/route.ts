@@ -160,19 +160,38 @@ function buildPrompt(selectedKeys: string[]): string {
 }
 
 function extractImageDataUrlFromGemini(data: any): string {
-  const parts = data?.candidates?.[0]?.content?.parts || [];
-  for (const p of parts) {
-    const inline = p?.inlineData || p?.inline_data;
-    if (inline?.data) {
-      const mt = inline?.mimeType || inline?.mime_type || 'image/png';
-      return `data:${mt};base64,${inline.data}`;
-    }
-    if (p?.text) {
-      const u = String(p.text).match(/https?:\/\/[^\s)]+/);
-      if (u) return u[0];
+  const candidates = Array.isArray(data?.candidates) ? data.candidates : [];
+
+  for (const c of candidates) {
+    const parts = c?.content?.parts || [];
+    for (const p of parts) {
+      const inline = p?.inlineData || p?.inline_data;
+      if (inline?.data) {
+        const mt = inline?.mimeType || inline?.mime_type || 'image/png';
+        return `data:${mt};base64,${inline.data}`;
+      }
+      if (p?.text) {
+        const u = String(p.text).match(/https?:\/\/[^\s)]+/);
+        if (u) return u[0];
+      }
     }
   }
+
   throw new Error('NO_IMAGE');
+}
+
+function getBlockReasonFromGemini(data: any): string | null {
+  const reason = data?.promptFeedback?.blockReason || data?.prompt_feedback?.block_reason;
+  return reason ? String(reason) : null;
+}
+
+function getProviderErrorMessage(data: any): string {
+  const msg = data?.error?.message || data?.error || '';
+  return String(msg || '').trim();
+}
+
+async function sleepMs(ms: number) {
+  await new Promise((r) => setTimeout(r, ms));
 }
 
 async function refundPoints(userId: string, toolId: string | null, amount: number, reason: string) {
@@ -276,48 +295,89 @@ export async function POST(req: NextRequest) {
       generationConfig: {
         aspectRatio: '3:4',
         negativePrompt: NEGATIVE_PROMPT,
+        // Ask provider to return image parts deterministically.
+        responseModalities: ['IMAGE'],
       },
     };
 
-    const r = await fetch(`${base}/v1beta/models/gemini-3.1-flash-image-preview:generateContent`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify(payload),
-    });
+    const maxAttempts = 2;
+    let dataResp: any = null;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      let r: Response;
+      try {
+        r = await fetch(`${base}/v1beta/models/gemini-3.1-flash-image-preview:generateContent`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${key}`,
+          },
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(180_000),
+        });
+      } catch (err: any) {
+        // Network/timeout: retry once.
+        if (attempt < maxAttempts) {
+          await sleepMs(800 * attempt);
+          continue;
+        }
+        throw new Error(`PROVIDER_ERROR:${String(err?.message || err || 'fetch failed')}`);
+      }
 
-    const dataResp = await r.json().catch(() => null);
-    if (!r.ok) {
-      const msg = dataResp?.error?.message || dataResp?.error || '生成失败';
-      throw new Error(`PROVIDER_ERROR:${msg}`);
+      dataResp = await r.json().catch(() => null);
+
+      const blockReason = getBlockReasonFromGemini(dataResp);
+      if (blockReason) {
+        throw new Error(`BLOCKED:${blockReason}`);
+      }
+
+      if (!r.ok) {
+        const providerMsg = getProviderErrorMessage(dataResp) || `HTTP ${r.status}`;
+        // Retry on transient upstream issues.
+        const retryable = r.status === 429 || r.status === 500 || r.status === 502 || r.status === 503;
+        if (retryable && attempt < maxAttempts) {
+          await sleepMs(800 * attempt);
+          continue;
+        }
+        throw new Error(`PROVIDER_ERROR:${providerMsg}`);
+      }
+
+      try {
+        const out = extractImageDataUrlFromGemini(dataResp);
+        const remaining = await prisma.user.findUnique({ where: { id: user.id }, select: { points: true } });
+
+        let imageUrl: string | null = null;
+        let imagePath: string | null = null;
+
+        if (String(out).startsWith('data:')) {
+          const saved = await saveGeneratedImageToPublic(req, out);
+          imageUrl = saved.imageUrl;
+          imagePath = saved.relPath;
+        } else if (String(out).startsWith('http://') || String(out).startsWith('https://')) {
+          // Provider gave us a URL; use it directly (still faster than base64 download).
+          imageUrl = String(out);
+        }
+
+        return NextResponse.json({
+          success: true,
+          // Prefer URL for better UX; keep imageDataUrl for backward compatibility.
+          imageUrl,
+          imagePath,
+          imageDataUrl: imageUrl ? null : out,
+          cost,
+          remaining_points: remaining?.points ?? null,
+        });
+      } catch (e: any) {
+        const msg = e?.message || 'NO_IMAGE';
+        if (msg === 'NO_IMAGE' && attempt < maxAttempts) {
+          await sleepMs(800 * attempt);
+          continue;
+        }
+        throw e;
+      }
     }
 
-    const out = extractImageDataUrlFromGemini(dataResp);
-    const remaining = await prisma.user.findUnique({ where: { id: user.id }, select: { points: true } });
-
-    let imageUrl: string | null = null;
-    let imagePath: string | null = null;
-
-    if (String(out).startsWith('data:')) {
-      const saved = await saveGeneratedImageToPublic(req, out);
-      imageUrl = saved.imageUrl;
-      imagePath = saved.relPath;
-    } else if (String(out).startsWith('http://') || String(out).startsWith('https://')) {
-      // Provider gave us a URL; use it directly (still faster than base64 download).
-      imageUrl = String(out);
-    }
-
-    return NextResponse.json({
-      success: true,
-      // Prefer URL for better UX; keep imageDataUrl for backward compatibility.
-      imageUrl,
-      imagePath,
-      imageDataUrl: imageUrl ? null : out,
-      cost,
-      remaining_points: remaining?.points ?? null,
-    });
+    // Should not reach here.
+    throw new Error('NO_IMAGE');
   } catch (e: any) {
     const msg = e?.message || '生成失败';
 
@@ -340,6 +400,14 @@ export async function POST(req: NextRequest) {
 
     if (msg === 'NO_IMAGE') {
       return NextResponse.json({ error: '生成成功但未返回图片，请重试' }, { status: 502 });
+    }
+
+    if (String(msg).startsWith('BLOCKED:')) {
+      const reason = String(msg).replace(/^BLOCKED:/, '').trim();
+      return NextResponse.json({
+        error: '生成请求被内容安全策略拦截，请换一张更清晰、无敏感内容的照片后重试',
+        reason,
+      }, { status: 400 });
     }
 
     if (msg === 'IMAGE_TOO_LARGE') {

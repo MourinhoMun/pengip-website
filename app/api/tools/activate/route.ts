@@ -156,6 +156,46 @@ export async function POST(request: NextRequest) {
         return { type: 'trial', newExpiry, isFirstActivation };
       }
 
+      // 月卡类型：30天订阅 + 首次激活赠送1500积分
+      if (activation.type === 'monthly') {
+        const user = await tx.user.findUnique({ where: { id: currentUser.userId } });
+        if (!user) throw new Error('USER_NOT_FOUND');
+
+        const now = new Date();
+        const base = user.subscriptionExpiresAt && user.subscriptionExpiresAt > now
+          ? user.subscriptionExpiresAt
+          : now;
+        const newExpiry = new Date(base.getTime() + 30 * 24 * 60 * 60 * 1000);
+        const isFirstActivation = !user.subscriptionExpiresAt;
+
+        await tx.user.update({
+          where: { id: user.id },
+          data: {
+            subscriptionExpiresAt: newExpiry,
+            ...(isFirstActivation ? { points: { increment: 1500 } } : {}),
+          },
+        });
+
+        if (isFirstActivation) {
+          await tx.pointTransaction.create({
+            data: {
+              userId: user.id,
+              amount: 1500,
+              type: 'recharge',
+              description: '月卡激活赠送积分',
+              relatedId: activation.id,
+            },
+          });
+        }
+
+        await tx.activationCode.update({
+          where: { id: activation.id },
+          data: { status: 'used', userId: currentUser.userId, usedAt: new Date() },
+        });
+
+        return { type: 'monthly', newExpiry, isFirstActivation };
+      }
+
       // 不支持的类型
       throw new Error('UNSUPPORTED_TYPE');
     });
@@ -180,6 +220,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: `试用码激活成功，有效期至 ${result.newExpiry.toLocaleDateString('zh-CN')}${result.isFirstActivation ? '，已赠送 100 积分' : ''}`,
+        subscriptionExpiresAt: result.newExpiry,
+      });
+    }
+
+    if (result.type === 'monthly' && result.newExpiry) {
+      return NextResponse.json({
+        success: true,
+        message: `月卡激活成功，有效期至 ${result.newExpiry.toLocaleDateString('zh-CN')}${result.isFirstActivation ? '，已赠送 1500 积分' : ''}`,
         subscriptionExpiresAt: result.newExpiry,
       });
     }
